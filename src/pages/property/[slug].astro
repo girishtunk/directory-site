@@ -2,8 +2,6 @@
 import { getProperties } from "../../lib/properties";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-import "../../styles/global.css";
-
 export async function getStaticPaths() {
   const properties = await getProperties();
     console.log('properties: ${p}')
@@ -128,4 +126,6 @@ const imageSrc =
 </BaseLayout>
 
   </body>
+      <link rel="stylesheet" href="/styles/global.css" />
+l̥
 </html>
