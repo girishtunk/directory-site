@@ -1,17 +1,18 @@
 ---
+import { base } from "astro:config/client";
+
 const { property } = Astro.props;
 
+// Default images based on property type
 const DEFAULT_IMAGES = {
-  apartment: "/images/defaults/apartment.jpg",
-  villa: "/images/defaults/villa.jpg",
-  commercial: "/images/defaults/commercial.jpg",
-  "independent-house": "/images/defaults/house.jpg",
+  apartment: base + "images/defaults/apartment.jpg",
+  villa: base + "images/defaults/villa.jpg",
+  commercial: base + "images/defaults/commercial.jpg",
+  "independent-house": base + "images/defaults/house.jpg",
 };
 
 // Final image selection
-const imageSrc =
-  property.image ||
-  DEFAULT_IMAGES[property.property_type]
+const imageSrc = property.cover_image || DEFAULT_IMAGES[property.property_type] || DEFAULT_IMAGES["independent-house"];
 ---
 
 <article
@@ -26,7 +27,11 @@ const imageSrc =
     onerror="this.src='images/defaults/house.jpg'"
   />
 
-  <h2>{property.title}</h2>
+  <h2>
+    <a href={`${base}property/${property.slug}`}>
+      {property.title}
+    </a>
+  </h2>
 
   <p>
     {property.area}, {property.city}
@@ -34,7 +39,7 @@ const imageSrc =
 
   <p class="price">&#8377; {property.total_price_cr} Cr</p>
 
-  <a href={`/property/${property.slug}`} class="btn">
+  <a href={`${base}property/${property.slug}`} class="btn">
     View Details
   </a>
 </article>

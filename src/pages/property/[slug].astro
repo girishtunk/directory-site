@@ -1,4 +1,5 @@
 ---
+import { base } from "astro:config/client";
 import { getProperties } from "../../lib/properties";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
@@ -15,10 +16,10 @@ export async function getStaticPaths() {
 const { property } = Astro.props;
 
 const DEFAULT_IMAGES = {
-  apartment: "/images/defaults/apartment.jpg",
-  villa: "/images/defaults/villa.jpg",
-  commercial: "/images/defaults/commercial.jpg",
-  "independent-house": "/images/defaults/house.jpg",
+  apartment: base + "images/defaults/apartment.jpg",
+  villa: base + "images/defaults/villa.jpg",
+  commercial: base + "images/defaults/commercial.jpg",
+  "independent-house": base + "images/defaults/house.jpg",
 };
 
 // Final image selection
@@ -124,8 +125,5 @@ const imageSrc =
   </section>
 </main>
 </BaseLayout>
-
   </body>
-      <link rel="stylesheet" href="/styles/global.css" />
-l̥
 </html>

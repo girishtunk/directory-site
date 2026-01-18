@@ -1,7 +1,9 @@
 ---
+import { base } from "astro:config/client";
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-    <link rel="stylesheet" href="/styles/global.css" />
+    <link rel="stylesheet" href={base + "styles/global.css"} />
 
 <BaseLayout
   title="About Us | Surya Property Consultant"
@@ -109,7 +111,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       using professional marketing strategies and our investor database.
     </p>
 
-    <a href="/contact" class="btn">Submit Your Property →</a>
+    <a href= {base + "contact"} class="btn">Submit Your Property →</a>
 
     <hr />
 

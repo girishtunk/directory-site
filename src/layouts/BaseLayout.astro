@@ -1,4 +1,5 @@
 ---
+import { base } from "astro:config/client";
 const { title = "Real Estate Directory", description = "" } = Astro.props;
 ---
 <!DOCTYPE html>
@@ -8,18 +9,21 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <link rel="stylesheet" href="/styles/global.css" />
+    <link rel="stylesheet" href={base + "styles/global.css"} />
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a href="/" class="logo">Surya Property Consultant</a>
+        <a href={base} class="logo">Surya Property Consultant</a>
 
         <nav class="main-nav">
-          <a href="/">Home</a>
-          <a href="/properties">Properties</a>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
+          <nav class="main-nav">
+          <a href={base}>Home</a>
+          <a href={base + "properties"}>Properties</a>
+          <a href={base + "about"}>About</a>
+          <a href={base + "contact"}>Contact</a>
+        </nav>
+
         </nav>
       </div>
     </header>

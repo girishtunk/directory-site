@@ -1,4 +1,6 @@
 ---
+
+import { base } from "astro:config/client";
 import { getProperties } from "../lib/properties";
 import PropertyCard from "../components/PropertyCard.astro";
 import SearchFilter from "../components/SearchFilter.astro";
@@ -30,4 +32,5 @@ let filterType = "all"; // will filter property type
 
 </section>
 </BaseLayout>
-<script type="module" src="/scripts/homepage.js"></script>
+<link rel="stylesheet" href={base + "styles/global.css"}>
+<script type="module" src={base + "scripts/homepage.js"}></script>
