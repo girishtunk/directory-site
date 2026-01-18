@@ -1,0 +1,39 @@
+---
+const { title = "Real Estate Directory", description = "" } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="logo">Surya Property Consultant</a>
+
+        <nav class="main-nav">
+          <a href="/">Home</a>
+          <a href="/properties">Properties</a>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>© {new Date().getFullYear()} Surya Property Consultant. All rights reserved.</p>
+        <p>RERA Registered | Trusted Property Listings</p>
+      </div>
+    </footer>
+  </body>
+</html>

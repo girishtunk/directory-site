@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getAllProperties, paginate } from "../../lib/properties";
+
+export async function getStaticPaths() {
+  const properties = await getAllProperties();
+  const pages = paginate(properties, 12);
+
+  return pages.map((_, index) => ({
+    params: { page: String(index + 1) },
+    props: {
+      properties: pages[index],
+      page: index + 1,
+      totalPages: pages.length
+    }
+  }));
+}
+
+const { properties, page, totalPages } = Astro.props;
+---
+
+<BaseLayout title={`Properties – Page ${page}`}>
+  <h1>Properties</h1>
+
+  <PropertyGrid properties={properties} />
+
+  <Pagination page={page} totalPages={totalPages} />
+</BaseLayout>

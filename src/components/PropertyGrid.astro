@@ -1,0 +1,10 @@
+---
+import PropertyCard from "./PropertyCard.astro";
+const { properties } = Astro.props;
+---
+
+<section class="grid">
+  {properties.map(p => (
+    <PropertyCard property={p} />
+  ))}
+</section>

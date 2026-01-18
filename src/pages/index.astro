@@ -1,16 +1,35 @@
 ---
+import { getProperties } from "../lib/properties";
+import PropertyCard from "../components/PropertyCard.astro";
+import SearchFilter from "../components/SearchFilter.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
+import "../styles/global.css";
+
+const properties = await getProperties();
+let searchQuery = ""; // will bind to search
+let filterType = "all"; // will filter property type
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title="Property Listings in Hyderabad"
+  description="Buy apartments, villas, and commercial properties in Hyderabad"
+>
+<section class="container">
+  <h1>Real Estate Listings</h1>
+
+  <!-- Search & Filters -->
+  <SearchFilter />
+
+  <!-- Grid -->
+  <div class="grid" id="property-grid">
+    {properties.map((p) => (
+	  <PropertyCard property={p} />
+    ))}
+  </div>
+
+  <div class="pagination" id="pagination"></div>
+
+</section>
+</BaseLayout>
+<script type="module" src="/scripts/homepage.js"></script>
