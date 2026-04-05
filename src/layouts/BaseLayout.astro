@@ -9,21 +9,31 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <link rel="icon" type="image/jpeg" href={base + "images/logo/suryaproperties.jpeg"} />
+    <link rel="apple-touch-icon" href={base + "images/logo/suryaproperties.jpeg"} />
     <link rel="stylesheet" href={base + "styles/global.css"} />
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a href={base} class="logo">Surya Property Consultant</a>
+        <a href={base} class="logo" aria-label="Surya Property Consultant home">
+          <img
+            src={base + "images/logo/suryaproperties.jpeg"}
+            alt="Surya Property Consultant logo"
+            class="logo-image"
+          />
+          <span class="logo-text">Surya Property Consultant</span>
+        </a>
 
         <nav class="main-nav">
-          <nav class="main-nav">
           <a href={base}>Home</a>
           <a href={base + "properties"}>Properties</a>
           <a href={base + "about"}>About</a>
           <a href={base + "contact"}>Contact</a>
-        </nav>
-
         </nav>
       </div>
     </header>
@@ -35,7 +45,48 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
     <footer class="site-footer">
       <div class="container footer-inner">
         <p>© {new Date().getFullYear()} Surya Property Consultant. All rights reserved.</p>
-        <p>RERA Registered | Trusted Property Listings</p>
+        <p>TG RERA NO. A02200002962 | Trusted Property Listings</p>
+        <div class="social-section" aria-label="Social media links">
+          <span class="social-title">Follow Us</span>
+          <div class="social-links">
+            <a
+              href="https://www.instagram.com/suryapropertyco"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+              <span class="sr-only">Instagram</span>
+            </a>
+            <a
+              href="https://www.facebook.com/people/Surya-Property-Consultant/61584014787759/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+            >
+              <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+              <span class="sr-only">Facebook</span>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/surya-property-consultant-anand-baradi-4820273aa/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+            >
+              <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+              <span class="sr-only">LinkedIn</span>
+            </a>
+            <a
+              href="https://whatsapp.com/channel/0029VaLGi8YEquiKU4eRbl01"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+            >
+              <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+              <span class="sr-only">WhatsApp</span>
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   </body>
