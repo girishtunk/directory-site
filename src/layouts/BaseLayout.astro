@@ -13,6 +13,13 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0YQCFL65JV"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0YQCFL65JV');
+    </script>
     <link rel="icon" type="image/jpeg" href={base + "images/logo/suryaproperties.jpeg"} />
     <link rel="apple-touch-icon" href={base + "images/logo/suryaproperties.jpeg"} />
     <link rel="stylesheet" href={base + "styles/global.css"} />
