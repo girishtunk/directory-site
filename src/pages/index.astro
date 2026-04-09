@@ -17,6 +17,8 @@ const investorCount = properties.filter((property) => property.is_rental_income)
   description="Buy apartments, villas, and commercial properties in Hyderabad"
 >
   <section class="container listing-page">
+    <SearchFilter properties={propertyCards} />
+
     <section class="listing-hero">
       <div class="listing-hero-copy">
         <p class="section-eyebrow">Premium Property Search</p>
@@ -46,8 +48,6 @@ const investorCount = properties.filter((property) => property.is_rental_income)
         </article>
       </div>
     </section>
-
-    <SearchFilter properties={propertyCards} />
 
     <section class="results-section">
       <div class="results-shell">
