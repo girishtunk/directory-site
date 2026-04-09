@@ -7,8 +7,8 @@ import SearchFilter from "../components/SearchFilter.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const properties = await getProperties();
-let searchQuery = ""; // will bind to search
-let filterType = "all"; // will filter property type
+type Property = (typeof properties)[number];
+const propertyCards: Property[] = properties;
 ---
 
 <BaseLayout
@@ -23,9 +23,15 @@ let filterType = "all"; // will filter property type
 
   <!-- Grid -->
   <div class="grid" id="property-grid">
-    {properties.map((p) => (
-	  <PropertyCard property={p} />
+    {propertyCards.map((property) => (
+	  <PropertyCard property={property} />
     ))}
+  </div>
+
+  <div id="empty-state" class="empty-state" hidden>
+    <h2>No properties match these filters</h2>
+    <p>Try a nearby area or switch the property type to see more options.</p>
+    <button type="button" class="btn" id="empty-reset-filters">Show All Properties</button>
   </div>
 
   <div class="pagination" id="pagination"></div>

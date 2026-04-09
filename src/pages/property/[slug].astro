@@ -3,17 +3,18 @@ import { base } from "astro:config/client";
 import { getProperties } from "../../lib/properties";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
+type Property = Awaited<ReturnType<typeof getProperties>>[number];
+
 export async function getStaticPaths() {
   const properties = await getProperties();
-    console.log('properties: ${p}')
 
-  return properties.map((p) => ({
+  return properties.map((p: Property) => ({
     params: { slug: p.slug },
     props: { property: p },
   }));
 }
 
-const { property } = Astro.props;
+const { property } = Astro.props as { property: Property };
 
 const DEFAULT_IMAGES = {
   apartment: base + "images/defaults/apartment.jpg",
@@ -25,7 +26,8 @@ const DEFAULT_IMAGES = {
 // Final image selection
 const imageSrc =
   property.image ||
-  DEFAULT_IMAGES[property.property_type]
+  DEFAULT_IMAGES[property.property_type as keyof typeof DEFAULT_IMAGES] ||
+  DEFAULT_IMAGES["independent-house"];
 ---
 
 <html lang="en">
@@ -80,7 +82,7 @@ const imageSrc =
     <div class="property-images">
       <img src={imageSrc} alt={property.title} />
       <!-- optional gallery -->
-      {property.gallery_images?.split(",").map(img => (
+      {property.gallery_images?.split(",").map((img: string) => (
         <img src={img} alt={property.title} class="gallery-img" />
       ))}
     </div>

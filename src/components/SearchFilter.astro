@@ -1,21 +1,49 @@
----
-const { properties } = Astro.props;
----
+<section class="search-panel" aria-label="Property search and filters">
+  <div class="search-panel-header">
+    <div>
+      <p class="section-eyebrow">Smart Search</p>
+      <h2>Find properties faster</h2>
+    </div>
+    <button type="button" class="btn btn-secondary" id="reset-filters">
+      Reset Filters
+    </button>
+  </div>
 
   <div class="filters">
-  <input
-    type="text"
-    placeholder="Search by area, locality, city..."
-    id="search-input"
-    autocomplete="off"
-  />
-  <ul id="search-suggestions" class="suggestions"></ul>
+    <div class="search-field">
+      <label for="search-input">Search by area or locality</label>
+      <div class="search-input-wrap">
+        <input
+          type="text"
+          placeholder="Try Kokapet, Gachibowli, Kondapur..."
+          id="search-input"
+          autocomplete="off"
+          aria-describedby="search-help"
+        />
+        <button type="button" id="clear-search" class="clear-search" aria-label="Clear search">
+          Clear
+        </button>
+      </div>
+      <p id="search-help" class="field-help">Use the search suggestions or type any listed area.</p>
+      <ul id="search-suggestions" class="suggestions"></ul>
+    </div>
 
-  <select id="type-filter">
-    <option value="all">All Types</option>
-    <option value="apartment">Apartment</option>
-    <option value="villa">Villa</option>
-    <option value="commercial">Commercial</option>
-    <option value="independent-house">Independent House</option>
-  </select>
-</div> 
+    <div class="filter-field">
+      <label for="type-filter">Property type</label>
+      <select id="type-filter">
+        <option value="all">All Types</option>
+        <option value="apartment">Apartment</option>
+        <option value="villa">Villa</option>
+        <option value="commercial">Commercial</option>
+        <option value="residential-plot">Residential Plots</option>
+        <option value="commercial-plot">Commercial Plots</option>
+        <option value="independent-house">Independent House</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="search-feedback">
+    <p id="results-summary" class="results-summary" aria-live="polite"></p>
+    <div id="active-filters" class="active-filters"></div>
+  </div>
+</section>
