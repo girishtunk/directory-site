@@ -1,5 +1,4 @@
 ---
-
 import { base } from "astro:config/client";
 import { getProperties } from "../lib/properties";
 import PropertyCard from "../components/PropertyCard.astro";
@@ -7,36 +6,69 @@ import SearchFilter from "../components/SearchFilter.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const properties = await getProperties();
-type Property = (typeof properties)[number];
-const propertyCards: Property[] = properties;
+const propertyCards = properties;
+const totalAreas = new Set(properties.map((property) => property.area).filter(Boolean)).size;
+const featuredCount = properties.filter((property) => property.featured).length;
+const investorCount = properties.filter((property) => property.is_rental_income).length;
 ---
 
 <BaseLayout
   title="Property Listings in Hyderabad"
   description="Buy apartments, villas, and commercial properties in Hyderabad"
 >
-<section class="container">
-  <h1>Real Estate Listings</h1>
+  <section class="container listing-page">
+    <section class="listing-hero">
+      <div class="listing-hero-copy">
+        <p class="section-eyebrow">Premium Property Search</p>
+        <h1>Discover Hyderabad listings with a richer, smarter browsing experience</h1>
+        <p class="section-intro hero-intro">
+          Explore verified homes, commercial spaces, and investment opportunities with filters that
+          help users fine-tune exactly what they want to see.
+        </p>
+      </div>
 
-  <!-- Search & Filters -->
-  <SearchFilter />
+      <div class="listing-hero-stats">
+        <article class="stat-card">
+          <strong>{properties.length}</strong>
+          <span>Active Listings</span>
+        </article>
+        <article class="stat-card">
+          <strong>{totalAreas}</strong>
+          <span>High-Demand Areas</span>
+        </article>
+        <article class="stat-card">
+          <strong>{featuredCount}</strong>
+          <span>Hot Deal Properties</span>
+        </article>
+        <article class="stat-card">
+          <strong>{investorCount}</strong>
+          <span>Investor Picks</span>
+        </article>
+      </div>
+    </section>
 
-  <!-- Grid -->
-  <div class="grid" id="property-grid">
-    {propertyCards.map((property) => (
-	  <PropertyCard property={property} />
-    ))}
-  </div>
+    <SearchFilter properties={propertyCards} />
 
-  <div id="empty-state" class="empty-state" hidden>
-    <h2>No properties match these filters</h2>
-    <p>Try a nearby area or switch the property type to see more options.</p>
-    <button type="button" class="btn" id="empty-reset-filters">Show All Properties</button>
-  </div>
+    <section class="results-section">
+      <div class="results-shell">
+        <div class="grid premium-grid" id="property-grid">
+          {propertyCards.map((property) => (
+            <PropertyCard property={property} />
+          ))}
+        </div>
 
-  <div class="pagination" id="pagination"></div>
+        <div id="empty-state" class="empty-state premium-empty-state" hidden>
+          <h2>No properties match these filters</h2>
+          <p>
+            Try widening the budget, changing area, or switching from hot deals to all listings.
+          </p>
+          <button type="button" class="btn" id="empty-reset-filters">Show All Properties</button>
+        </div>
 
-</section>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </section>
+  </section>
 </BaseLayout>
 <link rel="stylesheet" href={base + "styles/global.css"}>
 <script type="module" src={base + "scripts/homepage.js"}></script>

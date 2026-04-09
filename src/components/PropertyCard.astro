@@ -1,45 +1,122 @@
 ---
 import { base } from "astro:config/client";
 
-const { property } = Astro.props;
+type Property = {
+  [key: string]: any;
+  title: string;
+  slug: string;
+  area?: string;
+  city?: string;
+  locality?: string;
+  landmark?: string;
+  property_type?: string;
+  total_price_cr?: number;
+  built_up_area_sft?: string;
+  plot_area_sqyd?: string;
+  facing?: string;
+  view?: string;
+  featured?: boolean;
+  is_rental_income?: boolean;
+  cover_image?: string;
+};
 
-// Default images based on property type
+const { property } = Astro.props as { property: Property };
+
 const DEFAULT_IMAGES = {
   apartment: base + "images/defaults/apartment.jpg",
   villa: base + "images/defaults/villa.jpg",
   commercial: base + "images/defaults/commercial.jpg",
+  "residential-plot": base + "images/defaults/house.jpg",
+  "commercial-plot": base + "images/defaults/commercial.jpg",
   "independent-house": base + "images/defaults/house.jpg",
 };
 
-// Final image selection
-const imageSrc = property.cover_image || DEFAULT_IMAGES[property.property_type] || DEFAULT_IMAGES["independent-house"];
+const TYPE_LABELS = {
+  apartment: "Apartment",
+  villa: "Villa",
+  commercial: "Commercial",
+  "residential-plot": "Residential Plot",
+  "commercial-plot": "Commercial Plot",
+  "independent-house": "Independent House",
+};
+
+const imageSrc =
+  property.cover_image ||
+  DEFAULT_IMAGES[property.property_type as keyof typeof DEFAULT_IMAGES] ||
+  DEFAULT_IMAGES["independent-house"];
+
+const propertyTypeLabel =
+  TYPE_LABELS[property.property_type as keyof typeof TYPE_LABELS] || "Property";
+
+const sizeLabel = property.plot_area_sqyd
+  ? `${property.plot_area_sqyd} Sq.yd`
+  : property.built_up_area_sft
+    ? `${property.built_up_area_sft} SFT`
+    : null;
 ---
 
 <article
   class="card"
   data-type={property.property_type}
   data-area={property.area?.toLowerCase() || ""}
+  data-area-name={property.area || ""}
+  data-city={property.city?.toLowerCase() || ""}
+  data-locality={property.locality?.toLowerCase() || ""}
+  data-landmark={property.landmark?.toLowerCase() || ""}
+  data-title={property.title?.toLowerCase() || ""}
+  data-view={property.view?.toLowerCase() || ""}
+  data-facing={property.facing || ""}
+  data-price={property.total_price_cr || ""}
+  data-featured={property.featured ? "true" : "false"}
+  data-investor={property.is_rental_income ? "true" : "false"}
+  data-search={`${property.title || ""} ${property.area || ""} ${property.city || ""} ${property.locality || ""} ${property.landmark || ""} ${property.view || ""}`.toLowerCase()}
 >
-  <img
-    src={imageSrc}
-    alt={property.title}
-    loading="lazy"
-    onerror="this.src='images/defaults/house.jpg'"
-  />
+  <div class="card-media">
+    <img
+      src={imageSrc}
+      alt={property.title}
+      loading="lazy"
+      onerror="this.src='images/defaults/house.jpg'"
+    />
+    <div class="card-badges">
+      <span class="badge-chip badge-type">{propertyTypeLabel}</span>
+      {property.featured && <span class="badge-chip badge-featured-card">Hot Deal</span>}
+      {property.is_rental_income && <span class="badge-chip badge-investor">Investor Pick</span>}
+    </div>
+  </div>
 
-  <h2>
-    <a href={`${base}property/${property.slug}`}>
-      {property.title}
-    </a>
-  </h2>
+  <div class="card-body">
+    <div class="card-heading-row">
+      <div>
+        <p class="card-location">{property.area}, {property.city}</p>
+        <h2>
+          <a href={`${base}property/${property.slug}`}>
+            {property.title}
+          </a>
+        </h2>
+      </div>
+      <p class="price">&#8377; {property.total_price_cr} Cr</p>
+    </div>
 
-  <p>
-    {property.area}, {property.city}
-  </p>
+    <p class="card-subtitle">
+      {property.locality || property.landmark || "Verified property listing in a strong demand corridor."}
+    </p>
 
-  <p class="price">&#8377; {property.total_price_cr} Cr</p>
+    <div class="card-meta-grid">
+      {sizeLabel && <p><span>Size</span><strong>{sizeLabel}</strong></p>}
+      {property.facing && <p><span>Facing</span><strong>{property.facing}</strong></p>}
+      {property.view && <p><span>View</span><strong>{property.view}</strong></p>}
+    </div>
 
-  <a href={`${base}property/${property.slug}`} class="btn">
-    View Details
-  </a>
+    <div class="card-actions">
+      <a href={`${base}property/${property.slug}`} class="btn">
+        View Details
+      </a>
+      {property.area && (
+        <a href={`${base}?area=${encodeURIComponent(property.area)}`} class="btn btn-secondary btn-inline-link">
+          More in {property.area}
+        </a>
+      )}
+    </div>
+  </div>
 </article>
