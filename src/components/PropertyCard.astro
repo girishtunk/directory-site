@@ -53,6 +53,12 @@ const sizeLabel = property.plot_area_sqyd
   : property.built_up_area_sft
     ? `${property.built_up_area_sft} SFT`
     : null;
+
+const metaItems = [
+  { label: "Size", value: sizeLabel || "On request" },
+  { label: "Facing", value: property.facing || "On request" },
+  { label: "View", value: property.view || "On request" },
+];
 ---
 
 <article
@@ -87,25 +93,32 @@ const sizeLabel = property.plot_area_sqyd
 
   <div class="card-body">
     <div class="card-heading-row">
-      <div>
+      <div class="card-heading-col card-heading-location">
         <p class="card-location">{property.area}, {property.city}</p>
-        <h2>
-          <a href={`${base}property/${property.slug}`}>
-            {property.title}
-          </a>
-        </h2>
       </div>
-      <p class="price">&#8377; {property.total_price_cr} Cr</p>
+      <div class="card-heading-col card-heading-price">
+        <p class="price-label">Starting From</p>
+        <p class="price">&#8377; {property.total_price_cr} Cr</p>
+      </div>
     </div>
+
+    <h2 class="card-title-row">
+      <a href={`${base}property/${property.slug}`} title={property.title}>
+        {property.title}
+      </a>
+    </h2>
 
     <p class="card-subtitle">
       {property.locality || property.landmark || "Verified property listing in a strong demand corridor."}
     </p>
 
     <div class="card-meta-grid">
-      {sizeLabel && <p><span>Size</span><strong>{sizeLabel}</strong></p>}
-      {property.facing && <p><span>Facing</span><strong>{property.facing}</strong></p>}
-      {property.view && <p><span>View</span><strong>{property.view}</strong></p>}
+      {metaItems.map((item) => (
+        <p>
+          <span>{item.label}</span>
+          <strong title={item.value}>{item.value}</strong>
+        </p>
+      ))}
     </div>
 
     <div class="card-actions">
