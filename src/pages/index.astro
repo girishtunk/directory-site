@@ -4,12 +4,14 @@ import { getProperties } from "../lib/properties";
 import PropertyCard from "../components/PropertyCard.astro";
 import SearchFilter from "../components/SearchFilter.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { blogPosts } from "../lib/blogPosts";
 
 const properties = await getProperties();
 const propertyCards = properties;
-const totalAreas = new Set(properties.map((property) => property.area).filter(Boolean)).size;
-const featuredCount = properties.filter((property) => property.featured).length;
-const investorCount = properties.filter((property) => property.is_rental_income).length;
+const propertyAreas = propertyCards.map((property) => property.area).filter(Boolean);
+const totalAreas = new Set(propertyAreas).size;
+const featuredCount = propertyCards.filter((property) => property.featured).length;
+const investorCount = propertyCards.filter((property) => property.is_rental_income).length;
 ---
 
 <BaseLayout
@@ -66,6 +68,30 @@ const investorCount = properties.filter((property) => property.is_rental_income)
         </div>
 
         <div class="pagination" id="pagination"></div>
+      </div>
+    </section>
+
+    <section class="content-section blog-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-eyebrow">Blog Posts</p>
+          <h2>Property Insights for Buyers and Investors</h2>
+        </div>
+        <a href="/blog/">View All Posts</a>
+      </div>
+
+      <div class="blog-grid">
+        {blogPosts.map((post) => (
+          <article class="blog-card">
+            <p class="blog-card-meta">{post.category} • {post.readTime}</p>
+            <h3>{post.title}</h3>
+            <p>{post.excerpt}</p>
+            <div class="blog-card-footer">
+              <span>{post.publishedOn}</span>
+              <a href={`/blog/${post.slug}`}>Read Article</a>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   </section>
