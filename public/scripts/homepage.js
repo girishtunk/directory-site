@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-input");
   const suggestionsList = document.getElementById("search-suggestions");
   const clearSearchButton = document.getElementById("clear-search");
+  const toggleAdvancedFiltersButton = document.getElementById("toggle-advanced-filters");
+  const advancedFilters = document.getElementById("advanced-filters");
   const resetFiltersButton = document.getElementById("reset-filters");
   const emptyResetButton = document.getElementById("empty-reset-filters");
   const areaFilter = document.getElementById("area-filter");
@@ -29,9 +31,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const initialFacing = params.get("facing") || "all";
   const initialDeal = params.get("deal") || "all";
   const initialSort = params.get("sort") || "recommended";
+  const hasAdvancedParams = [initialArea, initialType, initialPrice, initialFacing, initialDeal, initialSort]
+    .some((value, index) => ["all", "all", "all", "all", "all", "recommended"][index] !== value);
 
   const areas = cards.map((card) => card.dataset.areaName).filter(Boolean);
   const uniqueAreas = [...new Set(areas)].sort();
+  const searchSuggestions = [
+    ...new Set(
+      cards.flatMap((card) => [
+        card.dataset.areaName,
+        card.dataset.locality,
+        card.dataset.landmark,
+        card.dataset.title,
+      ])
+    ),
+  ]
+    .filter(Boolean)
+    .map((value) => String(value).trim())
+    .filter(Boolean)
+    .sort((left, right) => left.localeCompare(right));
+
+  function setAdvancedFiltersVisibility(expanded) {
+    advancedFilters.hidden = !expanded;
+    toggleAdvancedFiltersButton.setAttribute("aria-expanded", String(expanded));
+    toggleAdvancedFiltersButton.textContent = expanded
+      ? "Hide Advanced Filters"
+      : "Show Advanced Filters";
+  }
 
   function updateAreaChipState(selectedArea) {
     areaChips.forEach((chip) => {
@@ -276,24 +302,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const matched = uniqueAreas
-      .filter((area) => area.toLowerCase().includes(query.toLowerCase()))
+    const normalizedQuery = query.toLowerCase();
+    const matched = searchSuggestions
+      .filter((value) => value.toLowerCase().includes(normalizedQuery))
       .slice(0, 6);
 
     if (!matched.length) {
       const item = document.createElement("li");
       item.className = "suggestion-empty";
-      item.textContent = "No matching areas";
+      item.textContent = "No matching suggestions";
       suggestionsList.appendChild(item);
       return;
     }
 
-    matched.forEach((area) => {
+    matched.forEach((value) => {
       const item = document.createElement("li");
-      item.textContent = area;
+      item.textContent = value;
       item.addEventListener("click", () => {
-        areaFilter.value = area;
-        searchInput.value = "";
+        searchInput.value = value;
         suggestionsList.innerHTML = "";
         filterProperties();
       });
@@ -321,11 +347,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   searchInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
-      const firstSuggestion = suggestionsList.querySelector("li:not(.suggestion-empty)");
-
-      if (firstSuggestion) {
-        firstSuggestion.click();
-      }
+      suggestionsList.innerHTML = "";
+      filterProperties();
     }
   });
 
@@ -348,6 +371,9 @@ document.addEventListener("DOMContentLoaded", () => {
   sortFilter.addEventListener("change", filterProperties);
   resetFiltersButton.addEventListener("click", resetFilters);
   emptyResetButton.addEventListener("click", resetFilters);
+  toggleAdvancedFiltersButton.addEventListener("click", () => {
+    setAdvancedFiltersVisibility(advancedFilters.hidden);
+  });
 
   areaChips.forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -392,5 +418,6 @@ document.addEventListener("DOMContentLoaded", () => {
     sortFilter.value = initialSort;
   }
 
+  setAdvancedFiltersVisibility(hasAdvancedParams);
   filterProperties();
 });

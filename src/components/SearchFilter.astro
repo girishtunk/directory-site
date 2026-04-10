@@ -24,113 +24,146 @@ const topAreas = Object.entries(areaCounts)
 
 <section class="search-panel premium-search" aria-label="Property search and filters">
   <div class="search-panel-intro">
-    <div>
+    <!-- <div>
       <p class="section-eyebrow">Refined Discovery</p>
-      <h2>Browse listings with premium filters</h2>
+      <h2>Search first, fine-tune when needed</h2>
       <p class="section-intro">
         Narrow down the right property by area, budget, facing, deal profile, and smart search.
       </p>
+    </div> -->
+<div class="search-input-wrap search-input-rich">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input
+        type="text"
+        placeholder="Search Kokapet, Financial District, luxury apartment, Radhey Raaga..."
+        id="search-input"
+        autocomplete="off"
+        aria-describedby="search-help"
+      />
+      <button type="button" id="clear-search" class="clear-search" aria-label="Clear search">
+        Clear
+      </button>
+      
     </div>
-
+    <!-- <p id="search-help" class="field-help">
+      Start with search. Expand advanced filters when you want to narrow results further.
+    </p> -->
+    <ul id="search-suggestions" class="suggestions"></ul>
     <div class="search-panel-actions">
-      <button type="button" class="btn btn-secondary" id="reset-filters">
-        Reset Filters
+      <button
+        type="button"
+        class="btn btn-secondary"
+        id="toggle-advanced-filters"
+        aria-expanded="false"
+        aria-controls="advanced-filters"
+      >
+        Show Advanced Filters
       </button>
     </div>
   </div>
 
-  <div class="filters filters-rich">
-    <div class="filter-span-2 search-field">
-      <label for="search-input">Search by area, locality, landmark, or title</label>
-      <div class="search-input-wrap search-input-rich">
-        <span class="search-icon" aria-hidden="true">⌕</span>
-        <input
-          type="text"
-          placeholder="Search Kokapet, Financial District, luxury apartment, Radhey Raaga..."
-          id="search-input"
-          autocomplete="off"
-          aria-describedby="search-help"
-        />
-        <button type="button" id="clear-search" class="clear-search" aria-label="Clear search">
-          Clear
-        </button>
+  <!-- <div class="search-field search-field-primary">
+    <label for="search-input">Search by area, locality, landmark, or title</label>
+    <div class="search-input-wrap search-input-rich">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input
+        type="text"
+        placeholder="Search Kokapet, Financial District, luxury apartment, Radhey Raaga..."
+        id="search-input"
+        autocomplete="off"
+        aria-describedby="search-help"
+      />
+      <button type="button" id="clear-search" class="clear-search" aria-label="Clear search">
+        Clear
+      </button>
+      
+    </div>
+    <p id="search-help" class="field-help">
+      Start with search. Expand advanced filters when you want to narrow results further.
+    </p>
+    <ul id="search-suggestions" class="suggestions"></ul>
+  </div> -->
+
+  <div id="advanced-filters" class="advanced-filters" hidden>
+    <div class="advanced-filters-toolbar">
+      <p class="advanced-filters-label">Advanced Filters</p>
+      <button type="button" class="btn btn-secondary" id="reset-filters">
+        Reset Filters
+      </button>
+    </div>
+
+    <div class="filters filters-rich">
+      <div class="filter-field">
+        <label for="area-filter">Area</label>
+        <select id="area-filter">
+          <option value="all">All Areas</option>
+          {Object.keys(areaCounts).sort().map((area) => <option value={area}>{area}</option>)}
+        </select>
       </div>
-      <p id="search-help" class="field-help">
-        Type freely or use quick suggestions and area chips to refine listings faster.
-      </p>
-      <ul id="search-suggestions" class="suggestions"></ul>
+
+      <div class="filter-field">
+        <label for="type-filter">Property Type</label>
+        <select id="type-filter">
+          <option value="all">All Types</option>
+          <option value="apartment">Apartment</option>
+          <option value="villa">Villa</option>
+          <option value="commercial">Commercial</option>
+          <option value="residential-plot">Residential Plots</option>
+          <option value="commercial-plot">Commercial Plots</option>
+          <option value="independent-house">Independent House</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="price-filter">Budget</label>
+        <select id="price-filter">
+          <option value="all">All Budgets</option>
+          <option value="under-3">Under 3 Cr</option>
+          <option value="3-5">3 Cr to 5 Cr</option>
+          <option value="5-10">5 Cr to 10 Cr</option>
+          <option value="10-plus">10 Cr and above</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="facing-filter">Facing</label>
+        <select id="facing-filter">
+          <option value="all">Any Facing</option>
+          <option value="East">East</option>
+          <option value="West">West</option>
+          <option value="North">North</option>
+          <option value="North-East">North-East</option>
+          <option value="North-West">North-West</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="deal-filter">Deal Profile</label>
+        <select id="deal-filter">
+          <option value="all">All Listings</option>
+          <option value="featured">Hot Deals</option>
+          <option value="investor">Investor-Focused</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="sort-filter">Sort By</label>
+        <select id="sort-filter">
+          <option value="recommended">Recommended</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="area-az">Area: A to Z</option>
+        </select>
+      </div>
     </div>
 
-    <div class="filter-field">
-      <label for="area-filter">Area</label>
-      <select id="area-filter">
-        <option value="all">All Areas</option>
-        {Object.keys(areaCounts).sort().map((area) => <option value={area}>{area}</option>)}
-      </select>
-    </div>
-
-    <div class="filter-field">
-      <label for="type-filter">Property Type</label>
-      <select id="type-filter">
-        <option value="all">All Types</option>
-        <option value="apartment">Apartment</option>
-        <option value="villa">Villa</option>
-        <option value="commercial">Commercial</option>
-        <option value="residential-plot">Residential Plots</option>
-        <option value="commercial-plot">Commercial Plots</option>
-        <option value="independent-house">Independent House</option>
-      </select>
-    </div>
-
-    <div class="filter-field">
-      <label for="price-filter">Budget</label>
-      <select id="price-filter">
-        <option value="all">All Budgets</option>
-        <option value="under-3">Under 3 Cr</option>
-        <option value="3-5">3 Cr to 5 Cr</option>
-        <option value="5-10">5 Cr to 10 Cr</option>
-        <option value="10-plus">10 Cr and above</option>
-      </select>
-    </div>
-
-    <div class="filter-field">
-      <label for="facing-filter">Facing</label>
-      <select id="facing-filter">
-        <option value="all">Any Facing</option>
-        <option value="East">East</option>
-        <option value="West">West</option>
-        <option value="North">North</option>
-        <option value="North-East">North-East</option>
-        <option value="North-West">North-West</option>
-      </select>
-    </div>
-
-    <div class="filter-field">
-      <label for="deal-filter">Deal Profile</label>
-      <select id="deal-filter">
-        <option value="all">All Listings</option>
-        <option value="featured">Hot Deals</option>
-        <option value="investor">Investor-Focused</option>
-      </select>
-    </div>
-
-    <div class="filter-field">
-      <label for="sort-filter">Sort By</label>
-      <select id="sort-filter">
-        <option value="recommended">Recommended</option>
-        <option value="price-low">Price: Low to High</option>
-        <option value="price-high">Price: High to Low</option>
-        <option value="area-az">Area: A to Z</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="quick-area-strip" aria-label="Popular areas">
-    <span class="quick-area-label">Popular Areas</span>
-    <div class="quick-area-chips">
-      {topAreas.map((area) => (
-        <button type="button" class="quick-area-chip" data-area-chip={area}>{area}</button>
-      ))}
+    <div class="quick-area-strip" aria-label="Popular areas">
+      <span class="quick-area-label">Popular Areas</span>
+      <div class="quick-area-chips">
+        {topAreas.map((area) => (
+          <button type="button" class="quick-area-chip" data-area-chip={area}>{area}</button>
+        ))}
+      </div>
     </div>
   </div>
 

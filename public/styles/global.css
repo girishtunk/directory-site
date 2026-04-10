@@ -832,6 +832,91 @@ h1, h2, h3, h4 {
   align-items: center;
 }
 
+.search-field-primary {
+  position: relative;
+  margin-bottom: 0.2rem;
+  padding: 0.7rem;
+  background: #fff;
+  border: 1px solid #e6eefb;
+  border-radius: 0.9rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
+.search-field-primary label {
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  color: #334155;
+}
+
+.search-field-primary .search-input-wrap {
+  position: relative;
+}
+
+.search-field-primary .search-input-rich input {
+  min-height: 48px;
+  padding-left: 2.7rem;
+  padding-right: 4.8rem;
+  border-radius: 0.8rem;
+  border-color: #d6e4fb;
+  box-shadow: none;
+  font-size: 0.95rem;
+}
+
+.search-field-primary .search-input-rich input::placeholder {
+  color: #7b8798;
+}
+
+.search-field-primary .search-icon {
+  left: 0.9rem;
+  font-size: 1rem;
+  color: #1a73e8;
+}
+
+.search-field-primary .clear-search {
+  right: 0.55rem;
+  padding: 0.32rem 0.62rem;
+  background: #edf4ff;
+  color: #1a73e8;
+  box-shadow: none;
+}
+
+.search-field-primary .clear-search:hover {
+  background: #dbeafe;
+}
+
+.search-field-primary .field-help {
+  margin-top: 0.35rem;
+  color: #5f6f82;
+  font-size: 0.76rem;
+}
+
+.search-field-primary .suggestions {
+  top: calc(100% - 0.1rem);
+}
+
+.advanced-filters {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #e7effb;
+}
+
+.advanced-filters-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.advanced-filters-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
 .filters-rich {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.8rem;
@@ -1217,6 +1302,21 @@ h1, h2, h3, h4 {
   .search-panel-intro,
   .search-feedback {
     gap: 0.85rem;
+  }
+
+  .advanced-filters-toolbar {
+    align-items: stretch;
+  }
+
+  .search-field-primary {
+    padding: 0.65rem;
+    border-radius: 0.85rem;
+  }
+
+  .search-field-primary .search-input-rich input {
+    min-height: 46px;
+    padding-left: 2.5rem;
+    padding-right: 4.6rem;
   }
 
   .search-panel-actions {
