@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { blogPosts } from "../../lib/blogPosts";
+
+export function getStaticPaths() {
+  return blogPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+---
+
+<BaseLayout title={`${post.title} | Surya Property Consultant`} description={post.description}>
+  <section class="container content-page blog-post-page">
+    <p class="section-eyebrow">{post.category}</p>
+    <h1>{post.title}</h1>
+    <p class="section-intro">{post.publishedOn} • {post.readTime}</p>
+
+    <article class="blog-post-body content-panel">
+      {post.body.map((paragraph: string) => <p>{paragraph}</p>)}
+    </article>
+  </section>
+</BaseLayout>

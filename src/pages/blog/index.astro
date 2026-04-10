@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { blogPosts } from "../../lib/blogPosts";
+---
+
+<BaseLayout
+  title="Blog | Surya Property Consultant"
+  description="Read real estate insights, buyer guides, and market updates from Surya Property Consultant."
+>
+  <section class="container content-page blog-page">
+    <p class="section-eyebrow">Blog</p>
+    <h1>Real Estate Insights and Buyer Guides</h1>
+    <p class="section-intro">
+      Read market updates, investment insights, and practical property guidance for buyers and investors.
+    </p>
+
+    <div class="blog-grid">
+      {blogPosts.map((post) => (
+        <article class="blog-card">
+          <p class="blog-card-meta">{post.category} • {post.readTime}</p>
+          <h2>{post.title}</h2>
+          <p>{post.excerpt}</p>
+          <div class="blog-card-footer">
+            <span>{post.publishedOn}</span>
+            <a href={`/blog/${post.slug}`}>Read Article</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
