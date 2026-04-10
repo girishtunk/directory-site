@@ -827,9 +827,35 @@ h1, h2, h3, h4 {
   margin-bottom: 0.25rem;
 }
 
+.search-panel-primary {
+  flex: 1 1 560px;
+  min-width: 0;
+}
+
 .search-panel-actions {
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
+}
+
+.search-input-compact input {
+  min-height: 46px;
+  border-radius: 0.85rem;
+  padding-left: 2.7rem;
+  padding-right: 4.8rem;
+  border-color: #d7e4fb;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+}
+
+.search-input-compact .search-icon {
+  left: 0.95rem;
+  color: #1a73e8;
+}
+
+.search-input-compact .clear-search {
+  right: 0.55rem;
+  padding: 0.32rem 0.62rem;
 }
 
 .search-field-primary {

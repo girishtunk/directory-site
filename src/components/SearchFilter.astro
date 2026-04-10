@@ -24,31 +24,28 @@ const topAreas = Object.entries(areaCounts)
 
 <section class="search-panel premium-search" aria-label="Property search and filters">
   <div class="search-panel-intro">
-    <!-- <div>
-      <p class="section-eyebrow">Refined Discovery</p>
-      <h2>Search first, fine-tune when needed</h2>
-      <p class="section-intro">
-        Narrow down the right property by area, budget, facing, deal profile, and smart search.
+    <div class="search-field search-panel-primary">
+      <label class="sr-only" for="search-input">Search by area, locality, landmark, or title</label>
+      <div class="search-input-wrap search-input-rich search-input-compact">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input
+          type="search"
+          placeholder="Search Kokapet, Financial District, luxury apartment, Radhey Raaga..."
+          id="search-input"
+          autocomplete="off"
+          enterkeyhint="search"
+          aria-describedby="search-help"
+        />
+        <button type="button" id="clear-search" class="clear-search" aria-label="Clear search">
+          Clear
+        </button>
+      </div>
+      <p id="search-help" class="sr-only">
+        Search across locations, landmarks, and listing titles.
       </p>
-    </div> -->
-<div class="search-input-wrap search-input-rich">
-      <span class="search-icon" aria-hidden="true">⌕</span>
-      <input
-        type="text"
-        placeholder="Search Kokapet, Financial District, luxury apartment, Radhey Raaga..."
-        id="search-input"
-        autocomplete="off"
-        aria-describedby="search-help"
-      />
-      <button type="button" id="clear-search" class="clear-search" aria-label="Clear search">
-        Clear
-      </button>
-      
+      <ul id="search-suggestions" class="suggestions"></ul>
     </div>
-    <!-- <p id="search-help" class="field-help">
-      Start with search. Expand advanced filters when you want to narrow results further.
-    </p> -->
-    <ul id="search-suggestions" class="suggestions"></ul>
+
     <div class="search-panel-actions">
       <button
         type="button"
@@ -61,28 +58,6 @@ const topAreas = Object.entries(areaCounts)
       </button>
     </div>
   </div>
-
-  <!-- <div class="search-field search-field-primary">
-    <label for="search-input">Search by area, locality, landmark, or title</label>
-    <div class="search-input-wrap search-input-rich">
-      <span class="search-icon" aria-hidden="true">⌕</span>
-      <input
-        type="text"
-        placeholder="Search Kokapet, Financial District, luxury apartment, Radhey Raaga..."
-        id="search-input"
-        autocomplete="off"
-        aria-describedby="search-help"
-      />
-      <button type="button" id="clear-search" class="clear-search" aria-label="Clear search">
-        Clear
-      </button>
-      
-    </div>
-    <p id="search-help" class="field-help">
-      Start with search. Expand advanced filters when you want to narrow results further.
-    </p>
-    <ul id="search-suggestions" class="suggestions"></ul>
-  </div> -->
 
   <div id="advanced-filters" class="advanced-filters" hidden>
     <div class="advanced-filters-toolbar">
