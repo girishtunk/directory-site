@@ -104,11 +104,15 @@ h1, h2, h3, h4 {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  width: 100%;
+  flex: 0 0 auto;
 }
 
 .header-nav-panel {
-  display: contents;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .mobile-menu-toggle {
@@ -176,6 +180,7 @@ h1, h2, h3, h4 {
   background: #f8fbff;
   border: 1px solid #e5eefb;
   border-radius: 999px;
+  margin: 0 auto;
 }
 
 .main-nav a {
@@ -812,6 +817,21 @@ h1, h2, h3, h4 {
   outline: none;
    border-color: #1a73e8;
    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.12);
+}
+
+.field-error {
+  display: block;
+  min-height: 1.1rem;
+  margin-top: 0.35rem;
+  color: #c62828;
+  font-size: 0.85rem;
+}
+
+.form-group input[aria-invalid="true"],
+.form-group select[aria-invalid="true"],
+.form-group textarea[aria-invalid="true"] {
+  border-color: #c62828;
+  box-shadow: 0 0 0 4px rgba(198, 40, 40, 0.08);
 }
 
 .btn-primary {
