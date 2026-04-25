@@ -68,9 +68,11 @@ function normalizeProperty(raw: Record<string, any>) {
   const repaired = normalizeImageFields(tailRepaired);
   const coverImage = pickImage(repaired.cover_image);
   const galleryImages = splitImages(repaired.gallery_images);
+  const propertyType = normalizePropertyType(repaired.property_type);
 
   return {
     ...repaired,
+    property_type: propertyType,
     total_price_cr: toOptionalNumber(repaired.total_price_cr),
     monthly_rent_lakhs: toNumber(repaired.monthly_rent_lakhs),
     featured: toBoolean(repaired.featured),
@@ -90,6 +92,29 @@ function normalizeProperty(raw: Record<string, any>) {
     full_description:
       cleanText(repaired.full_description) || cleanText(repaired.short_description),
   };
+}
+
+function normalizePropertyType(value: unknown) {
+  const type = cleanText(value).toLowerCase();
+
+  switch (type) {
+    case "apartment":
+    case "villa":
+    case "commercial":
+    case "residential-plot":
+    case "commercial-plot":
+    case "independent-house":
+      return type;
+    case "independent house":
+      return "independent-house";
+    case "plot":
+      return "residential-plot";
+    case "office":
+    case "retail":
+      return "commercial";
+    default:
+      return type;
+  }
 }
 
 function repairSegment<TField extends string>(
