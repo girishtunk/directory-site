@@ -23,11 +23,18 @@ const DEFAULT_IMAGES = {
   "independent-house": base + "images/defaults/house.jpg",
 };
 
+const galleryImages = property.gallery_images
+  ?.split(",")
+  .map((img: string) => img.trim())
+  .filter(Boolean) || [];
+
 // Final image selection
 const imageSrc =
-  property.image ||
+  property.cover_image ||
   DEFAULT_IMAGES[property.property_type as keyof typeof DEFAULT_IMAGES] ||
   DEFAULT_IMAGES["independent-house"];
+
+const priceLabel = property.total_price_cr != null ? `\u20B9 ${property.total_price_cr} Cr` : "\u20B9 N/a";
 ---
 
 <html lang="en">
@@ -82,7 +89,7 @@ const imageSrc =
     <div class="property-images">
       <img src={imageSrc} alt={property.title} />
       <!-- optional gallery -->
-      {property.gallery_images?.split(",").map((img: string) => (
+      {galleryImages.map((img: string) => (
         <img src={img} alt={property.title} class="gallery-img" />
       ))}
     </div>
@@ -90,7 +97,7 @@ const imageSrc =
     <div class="property-info">
     {property.featured && <span class="badge-featured">Featured</span>}
 
-      <p class="price"> &#8377; {property.total_price_cr} Cr</p>
+      <p class="price">{priceLabel}</p>
       {property.is_rental_income && (
         <p>Monthly Rent: &#8377; {property.monthly_rent_lakhs} Lakh</p>
       )}
@@ -105,7 +112,7 @@ const imageSrc =
       </ul>
 
       <div class="cta-buttons">
-        <a href="tel:{property.phone}" class="btn">Call</a>
+        {property.phone && <a href={`tel:${property.phone}`} class="btn">Call</a>}
       </div>
     </div>
   </div>

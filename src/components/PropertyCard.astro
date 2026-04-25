@@ -48,6 +48,8 @@ const imageSrc =
 const propertyTypeLabel =
   TYPE_LABELS[property.property_type as keyof typeof TYPE_LABELS] || "Property";
 
+const hasPrice = property.total_price_cr != null;
+
 const sizeLabel = property.plot_area_sqyd
   ? `${property.plot_area_sqyd} Sq.yd`
   : property.built_up_area_sft
@@ -72,7 +74,7 @@ const metaItems = [
   data-title={property.title?.toLowerCase() || ""}
   data-view={property.view?.toLowerCase() || ""}
   data-facing={property.facing || ""}
-  data-price={property.total_price_cr || ""}
+  data-price={property.total_price_cr ?? ""}
   data-featured={property.featured ? "true" : "false"}
   data-investor={property.is_rental_income ? "true" : "false"}
   data-search={`${property.title || ""} ${property.area || ""} ${property.city || ""} ${property.locality || ""} ${property.landmark || ""} ${property.view || ""}`.toLowerCase()}
@@ -96,10 +98,12 @@ const metaItems = [
       <div class="card-heading-col card-heading-location">
         <p class="card-location">{property.area}, {property.city}</p>
       </div>
-      <div class="card-heading-col card-heading-price">
-        <p class="price-label">Starting From</p>
-        <p class="price">&#8377; {property.total_price_cr} Cr</p>
-      </div>
+      {hasPrice && (
+        <div class="card-heading-col card-heading-price">
+          <p class="price-label">Starting From</p>
+          <p class="price">&#8377; {property.total_price_cr} Cr</p>
+        </div>
+      )}
     </div>
 
     <h2 class="card-title-row">
