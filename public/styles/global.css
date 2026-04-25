@@ -592,6 +592,20 @@ h1, h2, h3, h4 {
   transition: background 0.2s, color 0.2s;
 }
 
+.pagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  color: #64748b;
+  font-weight: 700;
+}
+
 .pagination button.active {
   background-color: #1a73e8;
   color: #fff;
