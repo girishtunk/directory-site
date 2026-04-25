@@ -50,6 +50,13 @@ const propertyTypeLabel =
 
 const hasPrice = property.total_price_cr != null;
 
+const locationLabel =
+  property.area && property.city
+    ? property.area.trim().toLowerCase() === property.city.trim().toLowerCase()
+      ? property.city
+      : `${property.area}, ${property.city}`
+    : property.area || property.city || "";
+
 const sizeLabel = property.plot_area_sqyd
   ? `${property.plot_area_sqyd} Sq.yd`
   : property.built_up_area_sft
@@ -96,7 +103,7 @@ const metaItems = [
   <div class="card-body">
     <div class="card-heading-row">
       <div class="card-heading-col card-heading-location">
-        <p class="card-location">{property.area}, {property.city}</p>
+        <p class="card-location">{locationLabel}</p>
       </div>
       {hasPrice && (
         <div class="card-heading-col card-heading-price">
@@ -130,7 +137,11 @@ const metaItems = [
         View Details
       </a>
       {property.area && (
-        <a href={`${base}?area=${encodeURIComponent(property.area)}`} class="btn btn-secondary btn-inline-link">
+        <a
+          href={`${base}?area=${encodeURIComponent(property.area)}`}
+          class="btn btn-secondary btn-inline-link"
+          title={`More in ${property.area}`}
+        >
           More in {property.area}
         </a>
       )}

@@ -1163,6 +1163,9 @@ h1, h2, h3, h4 {
 
 .card-body {
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
 }
 
 .card-heading-row {
@@ -1240,7 +1243,8 @@ h1, h2, h3, h4 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.45rem;
-  margin-top: 0.8rem;
+  margin-top: auto;
+  padding-top: 0.8rem;
 }
 
 .card-meta-grid p {
@@ -1273,7 +1277,8 @@ h1, h2, h3, h4 {
 .card-actions {
   display: flex;
   gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: stretch;
   margin-top: 1rem;
 }
 
@@ -1282,7 +1287,16 @@ h1, h2, h3, h4 {
   text-align: center;
 }
 
+.card-actions .btn:first-child {
+  flex: 0 0 auto;
+}
+
 .btn-inline-link {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   text-decoration: none;
 }
 
@@ -1544,12 +1558,8 @@ h1, h2, h3, h4 {
     padding: 0.9rem;
   }
 
-  .card-actions {
-    flex-direction: column;
-  }
-
   .card a.btn {
-    width: 100%;
+    width: auto;
   }
 
   .active-filters {
