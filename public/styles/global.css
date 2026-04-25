@@ -85,6 +85,7 @@ h1, h2, h3, h4 {
   position: sticky;
   top: 0;
   z-index: 100;
+  padding: 0 0.5rem;
 }
 
 .header-inner {
@@ -1952,6 +1953,10 @@ h1, h2, h3, h4 {
 }
 
 @media (max-width: 480px) {
+  .site-header {
+    padding: 0 0.25rem;
+  }
+
   .logo-image {
     width: 44px;
     height: 44px;
