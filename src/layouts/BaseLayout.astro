@@ -39,17 +39,26 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
           </span>
         </a>
 
-        <nav class="main-nav" aria-label="Primary navigation">
-          <a href={base}>Home</a>
-          <a href={base + "properties"}>Properties</a>
-          <a href={base + "blog"}>Blog</a>
-          <a href={base + "about"}>About</a>
-          <a href={base + "contact"}>Contact</a>
-        </nav>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true" />
+        <label for="nav-toggle" class="nav-toggle-button" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
 
-        <div class="header-cta">
-          <span class="header-cta-text">Schedule a Site Visit</span>
-          <a href={base + "contact"} class="btn header-cta-button">Enquire Now</a>
+        <div class="header-menu">
+          <nav class="main-nav" aria-label="Primary navigation">
+            <a href={base}>Home</a>
+            <a href={base + "properties"}>Properties</a>
+            <a href={base + "blog"}>Blog</a>
+            <a href={base + "about"}>About</a>
+            <a href={base + "contact"}>Contact</a>
+          </nav>
+
+          <div class="header-cta">
+            <span class="header-cta-text">Schedule a Site Visit</span>
+            <a href={base + "contact"} class="btn header-cta-button">Enquire Now</a>
+          </div>
         </div>
       </div>
     </header>

@@ -9,6 +9,7 @@ html {
   font-family: 'Inter', sans-serif;
   scroll-behavior: smooth;
   height: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -18,6 +19,11 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
 }
 
 main {
@@ -87,6 +93,41 @@ h1, h2, h3, h4 {
   align-items: center;
   min-height: 88px;
   gap: 1rem;
+}
+
+.header-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-toggle-button {
+  display: none;
+  width: 46px;
+  height: 46px;
+  border: 1px solid #dbe6f7;
+  border-radius: 0.95rem;
+  background: #fff;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.24rem;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.nav-toggle-button span {
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #0f2747;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .logo {
@@ -1242,6 +1283,11 @@ h1, h2, h3, h4 {
   font-size: 0.88rem;
 }
 
+.footer-inner,
+.social-section {
+  min-width: 0;
+}
+
 .blog-page,
 .blog-post-page {
   padding-top: 1.5rem;
@@ -1490,6 +1536,21 @@ h1, h2, h3, h4 {
     text-align: left;
   }
 
+  .card-title-row,
+  .card-title-row a {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .card-subtitle {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
   .card-meta-grid {
     grid-template-columns: 1fr;
   }
@@ -1498,32 +1559,104 @@ h1, h2, h3, h4 {
 @media (max-width: 900px) {
   .header-inner {
     min-height: auto;
-    padding: 0.85rem 0;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.9rem;
+    padding: 0.65rem 0;
+    position: relative;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
   }
 
   .logo {
-    justify-content: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 0.6rem;
+  }
+
+  .logo-image {
+    width: 52px;
+    height: 52px;
+    border-radius: 0.85rem;
+  }
+
+  .logo-kicker {
+    display: none;
+  }
+
+  .logo-text {
+    font-size: 0.98rem;
+  }
+
+  .nav-toggle-button {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  .header-menu {
+    width: 100%;
+    order: 3;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+    padding: 0.85rem;
+    border: 1px solid #e4ecf8;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  }
+
+  .nav-toggle:checked + .nav-toggle-button span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .nav-toggle:checked + .nav-toggle-button span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-toggle:checked + .nav-toggle-button span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  .nav-toggle:checked + .nav-toggle-button + .header-menu {
+    display: flex;
   }
 
   .main-nav {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    border-radius: 1rem;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
   }
 
   .main-nav a {
     margin-left: 0;
-    padding: 0.7rem 0.95rem;
+    padding: 0.72rem 0.78rem;
+    text-align: center;
+    font-size: 0.92rem;
+    background: #f8fbff;
+    border: 1px solid #e5eefb;
   }
 
   .header-cta {
-    justify-content: center;
-    flex-wrap: wrap;
+    width: 100%;
+    justify-content: stretch;
+    gap: 0.5rem;
+  }
+
+  .header-cta-text {
+    display: none;
+  }
+
+  .header-cta-button {
+    width: 100%;
+    min-height: 42px;
+    padding: 0.65rem 0.85rem;
+    box-shadow: none;
   }
 
   .footer-inner,
@@ -1562,6 +1695,13 @@ h1, h2, h3, h4 {
 
   .container {
     padding: 0 0.85rem;
+  }
+
+  .footer-inner,
+  .social-section,
+  .blog-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .btn,
@@ -1702,6 +1842,10 @@ h1, h2, h3, h4 {
     border-radius: 1rem;
   }
 
+  .blog-grid {
+    grid-template-columns: 1fr;
+  }
+
   .grid {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -1723,6 +1867,15 @@ h1, h2, h3, h4 {
     width: auto;
   }
 
+  .card-actions {
+    gap: 0.55rem;
+  }
+
+  .card-actions .btn:first-child,
+  .btn-inline-link {
+    flex: 1 1 0;
+  }
+
   .active-filters {
     width: 100%;
   }
@@ -1741,6 +1894,7 @@ h1, h2, h3, h4 {
 
   .property-page-shell {
     padding-top: 1rem;
+    padding-bottom: 1.5rem;
   }
 
   .property-hero-copy,
@@ -1753,8 +1907,30 @@ h1, h2, h3, h4 {
     font-size: 1.75rem;
   }
 
+  .property-breadcrumbs {
+    font-size: 0.82rem;
+    gap: 0.3rem;
+  }
+
+  .property-hero-description,
+  .property-summary-item strong,
+  .property-detail-item strong,
+  .property-description-copy p,
+  .property-empty-state {
+    font-size: 0.94rem;
+  }
+
+  .property-summary-price {
+    font-size: 1.7rem;
+  }
+
+  .property-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .property-hero-actions,
   .property-sidebar-actions {
+    display: grid;
     grid-template-columns: 1fr;
   }
 
@@ -1777,26 +1953,35 @@ h1, h2, h3, h4 {
 
 @media (max-width: 480px) {
   .logo-image {
-    width: 64px;
-    height: 64px;
-  }
-
-  .logo-copy {
-    align-items: center;
-    text-align: center;
+    width: 44px;
+    height: 44px;
   }
 
   .logo-text {
-    font-size: 0.98rem;
+    font-size: 0.92rem;
   }
 
-  .main-nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .site-header {
+    backdrop-filter: blur(10px);
+  }
+
+  .header-inner {
+    padding: 0.5rem 0;
+    gap: 0.5rem;
   }
 
   .main-nav a {
-    text-align: center;
+    padding: 0.62rem 0.68rem;
+    font-size: 0.88rem;
+  }
+
+  .header-menu {
+    padding: 0.75rem;
+  }
+
+  .nav-toggle-button {
+    width: 42px;
+    height: 42px;
   }
 
   .listing-hero-copy h1 {
@@ -1809,7 +1994,6 @@ h1, h2, h3, h4 {
 
   .search-panel,
   .results-shell,
-  .property-page,
   .contact-form,
   .empty-state {
     border-radius: 0.9rem;
@@ -1840,5 +2024,9 @@ h1, h2, h3, h4 {
 
   .footer-inner {
     gap: 0.75rem;
+  }
+
+  .social-links {
+    justify-content: center;
   }
 }
