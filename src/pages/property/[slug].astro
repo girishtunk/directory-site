@@ -136,7 +136,6 @@ function getValue(value: string) {
       </div>
 
       <aside class="property-summary-card">
-        <div class="property-summary-price">Price: {priceLabel}</div>
         <div class="property-summary-grid">
           {summaryItems.map((item) => (
             <div class="property-summary-item">
@@ -164,7 +163,6 @@ function getValue(value: string) {
         <section class="property-section-card">
           <div class="property-section-heading">
             <h2>Overview</h2>
-            <p>Key information organised for faster shortlisting.</p>
           </div>
           <div class="property-detail-grid">
             {specificationItems.map((item) => (
@@ -179,7 +177,6 @@ function getValue(value: string) {
         <section class="property-section-card">
           <div class="property-section-heading">
             <h2>Description</h2>
-            <p>Listing narrative and buyer-facing summary.</p>
           </div>
           <div class="property-description-copy">
             <p>{getValue(property.full_description || property.short_description)}</p>
@@ -189,7 +186,6 @@ function getValue(value: string) {
         <section class="property-section-card">
           <div class="property-section-heading">
             <h2>Project Details</h2>
-            <p>Development, compliance, and project-level context.</p>
           </div>
           <div class="property-detail-grid">
             {projectItems.map((item) => (
@@ -204,7 +200,6 @@ function getValue(value: string) {
         <section class="property-section-card">
           <div class="property-section-heading">
             <h2>Investment Snapshot</h2>
-            <p>Income-related information, where available.</p>
           </div>
           <div class="property-detail-grid">
             {investmentItems.map((item) => (
@@ -219,7 +214,6 @@ function getValue(value: string) {
         <section class="property-section-card">
           <div class="property-section-heading">
             <h2>Location Map</h2>
-            <p>Site context and approach reference.</p>
           </div>
           {property.google_maps_link ? (
             <div class="property-map-frame">
