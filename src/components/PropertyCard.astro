@@ -1,5 +1,6 @@
 ---
 import { base } from "astro:config/client";
+import { firstUniqueValue, formatLocationParts } from "../lib/location";
 
 type Property = {
   [key: string]: any;
@@ -50,12 +51,10 @@ const propertyTypeLabel =
 
 const hasPrice = property.total_price_cr != null;
 
-const locationLabel =
-  property.area && property.city
-    ? property.area.trim().toLowerCase() === property.city.trim().toLowerCase()
-      ? property.city
-      : `${property.area}, ${property.city}`
-    : property.area || property.city || "";
+const locationLabel = formatLocationParts(property.area, property.city);
+const subtitleLabel =
+  firstUniqueValue([property.locality, property.area, property.city], [property.landmark]) ||
+  firstUniqueValue([property.area, property.city], [property.locality, property.landmark]);
 
 const sizeLabel = property.plot_area_sqyd
   ? `${property.plot_area_sqyd} Sq.yd`
@@ -120,7 +119,7 @@ const metaItems = [
     </h2>
 
     <p class="card-subtitle">
-      {property.locality || property.landmark || "Verified property listing in a strong demand corridor."}
+      {subtitleLabel || "Verified property listing in a strong demand corridor."}
     </p>
 
     <div class="card-meta-grid">

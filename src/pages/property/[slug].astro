@@ -1,6 +1,7 @@
 ---
 import { base } from "astro:config/client";
 import { getProperties } from "../../lib/properties";
+import { formatLocationParts } from "../../lib/location";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 type Property = Awaited<ReturnType<typeof getProperties>>[number];
@@ -43,8 +44,7 @@ const rentLabel = property.is_rental_income && property.monthly_rent_lakhs
   ? `\u20B9 ${property.monthly_rent_lakhs} Lakh / month`
   : FALLBACK_TEXT;
 
-const locationParts = [property.locality, property.area, property.city].filter(Boolean);
-const locationLabel = locationParts.length ? locationParts.join(", ") : FALLBACK_TEXT;
+const locationLabel = formatLocationParts(property.locality, property.area, property.city) || FALLBACK_TEXT;
 const sizeLabel = property.built_up_area_sft
   ? `${property.built_up_area_sft} SFT`
   : property.plot_area_sqyd
