@@ -276,23 +276,69 @@ document.addEventListener("DOMContentLoaded", () => {
     paginationContainer.innerHTML = "";
     const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
 
-    for (let i = 1; i <= totalPages; i += 1) {
-      const button = document.createElement("button");
-      button.textContent = i;
+    if (totalPages <= 1) {
+      return;
+    }
 
-      if (i === currentPage) {
-        button.classList.add("active");
+    const pages = getVisiblePages(totalPages, currentPage);
+
+    paginationContainer.appendChild(createPaginationButton("Prev", currentPage - 1, currentPage === 1));
+
+    pages.forEach((page) => {
+      if (page === "...") {
+        const ellipsis = document.createElement("span");
+        ellipsis.className = "pagination-ellipsis";
+        ellipsis.textContent = "...";
+        paginationContainer.appendChild(ellipsis);
+        return;
       }
 
-      button.addEventListener("click", () => {
-        currentPage = i;
-        showPage(currentPage);
-        renderPagination();
-        grid.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+      paginationContainer.appendChild(createPaginationButton(String(page), page, false, page === currentPage));
+    });
 
-      paginationContainer.appendChild(button);
+    paginationContainer.appendChild(
+      createPaginationButton("Next", currentPage + 1, currentPage === totalPages)
+    );
+  }
+
+  function getVisiblePages(totalPages, page) {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
     }
+
+    if (page <= 3) {
+      return [1, 2, 3, 4, "...", totalPages];
+    }
+
+    if (page >= totalPages - 2) {
+      return [1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, "...", page - 1, page, page + 1, "...", totalPages];
+  }
+
+  function createPaginationButton(label, page, disabled = false, active = false) {
+    const button = document.createElement("button");
+    button.textContent = label;
+    button.disabled = disabled;
+
+    if (active) {
+      button.classList.add("active");
+      button.setAttribute("aria-current", "page");
+    }
+
+    button.addEventListener("click", () => {
+      if (disabled || page === currentPage) {
+        return;
+      }
+
+      currentPage = page;
+      showPage(currentPage);
+      renderPagination();
+      grid.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    return button;
   }
 
   function showSuggestions(query) {
