@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { blogPosts } from "../../lib/blogPosts";
+import { base } from "astro:config/client";
 ---
 
 <BaseLayout
@@ -17,12 +18,12 @@ import { blogPosts } from "../../lib/blogPosts";
     <div class="blog-grid">
       {blogPosts.map((post) => (
         <article class="blog-card">
-          <p class="blog-card-meta">{post.category} • {post.readTime}</p>
+          <p class="blog-card-meta">{post.category} <span>·</span> {post.readTime}</p>
           <h2>{post.title}</h2>
           <p>{post.excerpt}</p>
           <div class="blog-card-footer">
             <span>{post.publishedOn}</span>
-            <a href={`/blog/${post.slug}`}>Read Article</a>
+            <a href={`${base}blog/${post.slug}`}>Read article →</a>
           </div>
         </article>
       ))}

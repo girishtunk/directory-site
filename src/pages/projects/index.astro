@@ -1,0 +1,43 @@
+---
+import { base } from "astro:config/client";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getDevelopers } from "../../lib/projects";
+
+const developers = await getDevelopers();
+const projectCount = developers.reduce((total, developer) => total + developer.projects.length, 0);
+---
+
+<BaseLayout
+  title="Developers & Projects in Hyderabad | Surya Property Consultant"
+  description="Explore property developers and their current residential and commercial projects across Hyderabad."
+>
+  <section class="container developer-page">
+    <header class="directory-hero">
+      <div>
+        <p class="section-eyebrow">Developer Directory</p>
+        <h1>Built by names<br /><em>worth knowing.</em></h1>
+      </div>
+      <div class="directory-hero-note">
+        <p>Browse our current collection by developer and discover their available projects across Hyderabad.</p>
+        <dl>
+          <div><dt>Developers</dt><dd>{developers.length}</dd></div>
+          <div><dt>Projects</dt><dd>{projectCount}</dd></div>
+        </dl>
+      </div>
+    </header>
+
+    <div class="developer-directory">
+      {developers.map((developer, index) => (
+        <a href={`${base}projects/${developer.slug}`} class="developer-card">
+          <span class="developer-index">{String(index + 1).padStart(2, "0")}</span>
+          <div>
+            <h2>{developer.name}</h2>
+            <p>{developer.locations.slice(0, 3).join(" · ") || "Hyderabad"}</p>
+          </div>
+          <span class="developer-count">{developer.projects.length} {developer.projects.length === 1 ? "project" : "projects"}</span>
+          <span class="developer-arrow" aria-hidden="true">↗</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

@@ -3,17 +3,16 @@ import { base } from "astro:config/client";
 
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-    <link rel="stylesheet" href={base + "styles/global.css"} />
-
 <BaseLayout
   title="About Us | Surya Property Consultant"
   description="Surya Property Consultant offers trusted residential, commercial, and investment-focused real estate services with legal clarity and high ROI opportunities."
 >
   <div class="container about-page">
-    <h1>About Surya Property Consultant</h1>
+    <p class="section-eyebrow">Independent Advisory</p>
+    <h1>Property decisions, made with clarity.</h1>
 
     <p>
-      At <strong>Surya Property Consultant</strong>, we believe real estate is not just about property —
+      At <strong>Surya Property Consultant</strong>, we believe real estate is not just about property -
       it’s about <strong>long-term value, trust, and informed decision-making</strong>.
     </p>
 
@@ -39,15 +38,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <h3>Residential Properties</h3>
     <ul>
-      <li>Apartments & Flats – Purchase and Sale</li>
+      <li>Apartments & Flats - Purchase and Sale</li>
       <li>Residential Rentals</li>
       <li>Villas & Gated Community Homes</li>
     </ul>
 
     <h3>Commercial Properties</h3>
     <ul>
-      <li>Commercial Spaces – Purchase & Sale</li>
-      <li>Office Spaces & Retail Units – Leasing</li>
+      <li>Commercial Spaces - Purchase & Sale</li>
+      <li>Office Spaces & Retail Units - Leasing</li>
       <li>Pre-Tenanted Commercial Properties</li>
     </ul>
 
@@ -88,11 +87,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <h2>Why Choose Surya Property Consultant?</h2>
     <ul>
-      <li>✔ Verified & Legally Clear Properties</li>
-      <li>✔ Strong Investor & Developer Network</li>
-      <li>✔ Market-Driven Pricing Guidance</li>
-      <li>✔ End-to-End Transaction Support</li>
-      <li>✔ Confidential & Professional Dealings</li>
+      <li>Verified & legally clear properties</li>
+      <li>Strong investor & developer network</li>
+      <li>Market-driven pricing guidance</li>
+      <li>End-to-end transaction support</li>
+      <li>Confidential & professional dealings</li>
     </ul>
 
     <p>
@@ -111,7 +110,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       using professional marketing strategies and our investor database.
     </p>
 
-    <a href= {base + "contact"} class="btn">Submit Your Property →</a>
+    <a href={base + "contact"} class="btn">Submit your property →</a>
 
     <hr />
 
@@ -126,15 +125,5 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <strong>Let your money work smarter with real estate.</strong>
     </p>
 
-    <hr />
-
-    <h2>Modern Website Features</h2>
-    <ul>
-      <li>Advanced Property Search & Filters</li>
-      <li>ROI & Rental Yield Calculator</li>
-      <li>Verified Property Badge</li>
-      <li>Google Map Property Location</li>
-      <li>One-Click WhatsApp & Call</li>
-    </ul>
   </div>
 </BaseLayout>

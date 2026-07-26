@@ -3,12 +3,13 @@ import { base } from "astro:config/client";
 import { getProperties } from "../../lib/properties";
 import { formatLocationParts } from "../../lib/location";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import DetailSection from "../../components/PropertyDetailSection.astro";
 
 type Property = Awaited<ReturnType<typeof getProperties>>[number];
+type DetailItem = { label: string; value: string };
 
 export async function getStaticPaths() {
   const properties = await getProperties();
-
   return properties.map((property: Property) => ({
     params: { slug: property.slug },
     props: { property },
@@ -17,131 +18,339 @@ export async function getStaticPaths() {
 
 const { property } = Astro.props as { property: Property };
 
-const DEFAULT_IMAGES = {
+const DEFAULT_IMAGES: Record<string, string> = {
   apartment: base + "images/defaults/apartment.jpg",
   villa: base + "images/defaults/villa.jpg",
   commercial: base + "images/defaults/commercial.jpg",
+  "commercial-plot": base + "images/defaults/commercial.jpg",
+  "residential-plot": base + "images/defaults/house.jpg",
   "independent-house": base + "images/defaults/house.jpg",
 };
 
-const FALLBACK_TEXT = "Available on request";
+const TYPE_LABELS: Record<string, string> = {
+  apartment: "Apartment",
+  villa: "Villa",
+  commercial: "Commercial Property",
+  "commercial-plot": "Commercial Plot",
+  "residential-plot": "Residential Plot",
+  "independent-house": "Independent House",
+};
 
-const galleryImages = property.gallery_images
-  ?.split(",")
-  .map((img: string) => img.trim())
-  .filter(Boolean) || [];
-
-const imageSrc =
-  property.cover_image ||
-  DEFAULT_IMAGES[property.property_type as keyof typeof DEFAULT_IMAGES] ||
-  DEFAULT_IMAGES["independent-house"];
-
+const propertyType = property.property_type || "property";
+const typeLabel = TYPE_LABELS[propertyType] || humanize(propertyType);
+const isPlot = propertyType === "residential-plot" || propertyType === "commercial-plot";
+const isCommercial = propertyType === "commercial" || propertyType === "commercial-plot";
+const isHome = ["apartment", "villa", "independent-house"].includes(propertyType);
+const galleryImages = String(property.gallery_images || "").split(",").map((image) => image.trim()).filter(Boolean);
+const fallbackImage = DEFAULT_IMAGES[propertyType] || DEFAULT_IMAGES["independent-house"];
+const imageSrc = property.cover_image || fallbackImage;
 const pageTitle = property.seo_title || property.title;
 const pageDescription = property.seo_description || property.short_description || property.full_description;
+const locationLabel = formatLocationParts(property.locality, property.area, property.city) || "Hyderabad";
+const shortDescription = clean(property.short_description);
+const description = clean(property.full_description) || shortDescription;
+const heroDescription = shortDescription && shortDescription !== description ? shortDescription : "";
 
-const priceLabel = property.total_price_cr != null ? `\u20B9 ${property.total_price_cr} Cr` : FALLBACK_TEXT;
-const rentLabel = property.is_rental_income && property.monthly_rent_lakhs
-  ? `\u20B9 ${property.monthly_rent_lakhs} Lakh / month`
-  : FALLBACK_TEXT;
+const salePrice = positive(property.total_price_cr) ? `₹${property.total_price_cr} Cr` : "";
+const rentPrice = positive(property.monthly_rent_lakhs) ? `₹${property.monthly_rent_lakhs} Lakh / month` : "";
+const primaryPrice = ["rent", "lease"].includes(clean(property.listing_type).toLowerCase()) ? rentPrice : salePrice;
+const builtUp = positive(property.built_up_area_sft) ? `${formatNumber(property.built_up_area_sft)} SFT` : "";
+const superBuiltUp = positive(property.super_built_up_sft) ? `${formatNumber(property.super_built_up_sft)} SFT` : "";
+const plotArea = positive(property.plot_area_sqyd) ? `${formatNumber(property.plot_area_sqyd)} Sq.yd` : "";
+const landArea = positive(property.land_area_acres) ? `${formatNumber(property.land_area_acres)} acres` : "";
 
-const locationLabel = formatLocationParts(property.locality, property.area, property.city) || FALLBACK_TEXT;
-const sizeLabel = property.built_up_area_sft
-  ? `${property.built_up_area_sft} SFT`
-  : property.plot_area_sqyd
-    ? `${property.plot_area_sqyd} Sq.yd`
-    : FALLBACK_TEXT;
+const commonSummary = compact([
+  detail("Asking Price", primaryPrice),
+  detail("Location", locationLabel),
+]);
 
-const summaryItems = [
-  { label: "Price", value: priceLabel },
-  { label: "Location", value: locationLabel },
-  { label: "Property Type", value: property.property_type || FALLBACK_TEXT },
-  { label: "Listing Type", value: property.listing_type || FALLBACK_TEXT },
-  { label: "Status", value: property.status || FALLBACK_TEXT },
-  { label: "Built-up / Plot Size", value: sizeLabel },
-];
+const summaryByType: Record<string, DetailItem[]> = {
+  apartment: compact([
+    detail("Configuration", positive(property.bhk) ? `${formatNumber(property.bhk)} BHK` : clean(property.configuration)),
+    detail("Built-up Area", builtUp || superBuiltUp),
+    detail("Facing", property.facing),
+    detail("Possession", meaningfulStatus(property.possession_status)),
+  ]),
+  villa: compact([
+    detail("Configuration", positive(property.bhk) ? `${formatNumber(property.bhk)} BHK` : clean(property.configuration)),
+    detail("Built-up Area", builtUp),
+    detail("Plot Area", plotArea),
+    detail("Facing", property.facing),
+  ]),
+  "independent-house": compact([
+    detail("Configuration", positive(property.bhk) ? `${formatNumber(property.bhk)} BHK` : clean(property.configuration)),
+    detail("Built-up Area", builtUp),
+    detail("Plot Area", plotArea),
+    detail("Parking", countLabel(property.parking_slots, "space")),
+  ]),
+  "residential-plot": compact([
+    detail("Plot Area", plotArea),
+    detail("Rate", rate(property.price_per_sqyrd, "sq.yd")),
+    detail("Facing", property.facing),
+    detail("Road Access", property.road_approach),
+  ]),
+  "commercial-plot": compact([
+    detail("Plot Area", plotArea),
+    detail("Rate", rate(property.price_per_sqyrd, "sq.yd")),
+    detail("Facing", property.facing),
+    detail("Road Access", property.road_approach),
+  ]),
+  commercial: compact([
+    detail("Built-up Area", builtUp || plotArea),
+    detail("Rate", rate(property.price_per_sft, "SFT")),
+    detail("Configuration", property.configuration),
+    detail("Income Status", property.pre_tenanted ? "Pre-tenanted" : ""),
+  ]),
+};
 
-const specificationItems = [
-  { label: "Property ID", value: property.id || FALLBACK_TEXT },
-  { label: "Facing", value: property.facing || FALLBACK_TEXT },
-  {
-    label: "Floor",
-    value:
-      property.floor && property.total_floors
-        ? `${property.floor} / ${property.total_floors}`
-        : property.floor || property.total_floors || FALLBACK_TEXT,
-  },
-  { label: "BHK", value: property.bhk || FALLBACK_TEXT },
-  { label: "Bathrooms", value: property.bathrooms || FALLBACK_TEXT },
-  { label: "Parking", value: property.parking_slots || FALLBACK_TEXT },
-  { label: "View", value: property.view || FALLBACK_TEXT },
-  { label: "Unit Number", value: property.unit_number || FALLBACK_TEXT },
-  { label: "Tower / Block", value: property.block_tower || FALLBACK_TEXT },
-  { label: "Address", value: property.address || FALLBACK_TEXT },
-];
+const summaryItems = [...commonSummary, ...(summaryByType[propertyType] || [])].slice(0, 6);
 
-const projectItems = [
-  { label: "Project Name", value: property.project_name || FALLBACK_TEXT },
-  { label: "Developer", value: property.developer || FALLBACK_TEXT },
-  { label: "Possession", value: property.possession_status || FALLBACK_TEXT },
-  { label: "RERA Number", value: property.rera_number || FALLBACK_TEXT },
-  { label: "Amenities", value: property.amenities || FALLBACK_TEXT },
-];
+const specificationsByType: Record<string, DetailItem[]> = {
+  apartment: compact([
+    detail("BHK", positive(property.bhk) ? formatNumber(property.bhk) : ""),
+    detail("Bathrooms", countLabel(property.bathrooms, "bathroom")),
+    detail("Built-up Area", builtUp),
+    detail("Super Built-up Area", superBuiltUp),
+    detail("Floor", floorLabel(property.floor, property.total_floors)),
+    detail("Tower / Block", property.block_tower),
+    detail("Unit Number", property.unit_number),
+    detail("Facing", property.facing),
+    detail("View", property.view),
+    detail("Parking", countLabel(property.parking_slots, "space")),
+  ]),
+  villa: compact([
+    detail("BHK", positive(property.bhk) ? formatNumber(property.bhk) : ""),
+    detail("Bathrooms", countLabel(property.bathrooms, "bathroom")),
+    detail("Built-up Area", builtUp),
+    detail("Plot Area", plotArea),
+    detail("Facing", property.facing),
+    detail("View", property.view),
+    detail("Parking", countLabel(property.parking_slots, "space")),
+  ]),
+  "independent-house": compact([
+    detail("BHK", positive(property.bhk) ? formatNumber(property.bhk) : ""),
+    detail("Bathrooms", countLabel(property.bathrooms, "bathroom")),
+    detail("Built-up Area", builtUp),
+    detail("Plot Area", plotArea),
+    detail("Floors", positive(property.total_floors) ? formatNumber(property.total_floors) : ""),
+    detail("Facing", property.facing),
+    detail("Parking", countLabel(property.parking_slots, "space")),
+    detail("Road Access", property.road_approach),
+  ]),
+  "residential-plot": compact([
+    detail("Plot Area", plotArea),
+    detail("Facing", property.facing),
+    detail("Road Access", property.road_approach),
+    detail("Land Area", landArea),
+  ]),
+  "commercial-plot": compact([
+    detail("Plot Area", plotArea),
+    detail("Facing", property.facing),
+    detail("Road Access", property.road_approach),
+    detail("Land Area", landArea),
+  ]),
+  commercial: compact([
+    detail("Configuration", property.configuration),
+    detail("Built-up Area", builtUp),
+    detail("Super Built-up Area", superBuiltUp),
+    detail("Plot Area", plotArea),
+    detail("Floor", floorLabel(property.floor, property.total_floors)),
+    detail("Unit / Block", formatLocationParts(property.unit_number, property.block_tower)),
+    detail("Facing", property.facing),
+    detail("Parking", countLabel(property.parking_slots, "space")),
+    detail("Road Access", property.road_approach),
+  ]),
+};
 
-const investmentItems = [
-  { label: "Monthly Rent", value: rentLabel },
-  { label: "Annual Yield", value: property.annual_yield_percent ? `${property.annual_yield_percent}%` : FALLBACK_TEXT },
-  { label: "Tenant Type", value: property.tenant_type || FALLBACK_TEXT },
-  { label: "Lease Period", value: property.lease_period_years ? `${property.lease_period_years} years` : FALLBACK_TEXT },
-  { label: "Lock-in", value: property.lock_in_years ? `${property.lock_in_years} years` : FALLBACK_TEXT },
-  { label: "Rent Hike", value: property.rent_hike_percent ? `${property.rent_hike_percent}%` : FALLBACK_TEXT },
-];
+const specificationItems = specificationsByType[propertyType] || [];
+const specificationTitle = isPlot ? "Plot Details" : isCommercial ? "Commercial Asset" : propertyType === "villa" ? "Villa Details" : propertyType === "independent-house" ? "House Details" : "Apartment Details";
 
-const contactItems = [
-  { label: "Agent", value: property.agent_name || FALLBACK_TEXT },
-  { label: "Company", value: property.company || FALLBACK_TEXT },
-  { label: "Phone", value: property.phone || FALLBACK_TEXT },
-];
+const pricingItems = compact([
+  detail(["rent", "lease"].includes(clean(property.listing_type).toLowerCase()) ? "Monthly Rent" : "Total Price", primaryPrice),
+  detail("Price / SFT", rate(property.price_per_sft, "SFT")),
+  detail("Price / Sq.yd", rate(property.price_per_sqyrd, "sq.yd")),
+  detail("Terms", property.payment_terms),
+  detail("Negotiable", property.price_negotiable ? "Yes" : ""),
+  detail("Registration Included", property.includes_registration ? "Yes" : ""),
+  detail("GST Applicable", property.gst_applicable ? "Yes" : ""),
+]);
 
-function getValue(value: string) {
-  return value || FALLBACK_TEXT;
+const featureItems = compact([
+  detail("Corner Property", property.corner_unit ? "Yes" : ""),
+  detail("Gated Community", property.gated ? "Yes" : ""),
+  detail("Semi-gated", property.semi_gated ? "Yes" : ""),
+  detail("Lift", property.has_lift ? "Available" : ""),
+  detail("Servant Room", property.servant_room ? "Available" : ""),
+  detail("Theatre Room", property.theatre_room ? "Available" : ""),
+  detail("Standalone", property.standalone ? "Yes" : ""),
+  detail("Lockable Unit", property.is_lockable ? "Yes" : ""),
+]);
+
+const projectItems = compact([
+  detail("Project", property.project_name),
+  detail("Developer", property.developer),
+  detail("Possession", meaningfulStatus(property.possession_status)),
+  detail("Total Towers", positive(property.total_towers) ? formatNumber(property.total_towers) : ""),
+  detail("Project Size", landArea),
+  detail("Amenities", meaningfulText(property.amenities)),
+]);
+
+const investmentItems = compact([
+  detail("Tenancy", property.pre_tenanted ? "Pre-tenanted" : ""),
+  detail("Monthly Rent", rentPrice),
+  detail("Annual Yield", positive(property.annual_yield_percent) ? `${property.annual_yield_percent}%` : ""),
+  detail("Tenant Type", property.tenant_type),
+  detail("Lease Period", years(property.lease_period_years)),
+  detail("Lock-in", years(property.lock_in_years)),
+  detail("Rent Hike", positive(property.rent_hike_percent) ? `${property.rent_hike_percent}% ${clean(property.rent_hike_frequency)}`.trim() : ""),
+]);
+
+const locationItems = compact([
+  detail("Locality", property.locality),
+  detail("Area", property.area && clean(property.area).toLowerCase() !== clean(property.locality).toLowerCase() ? property.area : ""),
+  detail("City", property.city),
+  detail("Landmark", property.landmark),
+  detail("Address", property.address),
+]);
+
+const contactItems = compact([
+  detail("Advisor", meaningfulAgent(property.agent_name)),
+  detail("Company", property.company),
+  detail("Phone", property.phone),
+]);
+
+const statusLabel = meaningfulStatus(property.status) || "Available";
+const listingLabel = humanize(property.listing_type || "sale");
+const contactPropertyType = propertyType === "apartment"
+  ? "apartment"
+  : ["villa", "independent-house"].includes(propertyType)
+    ? "villa"
+    : isPlot
+      ? "plot"
+      : "commercial";
+const contactListingType = ["rent", "lease"].includes(clean(property.listing_type).toLowerCase()) ? "rent" : "buy";
+const enquiryMessage = [
+  `I am interested in ${property.title} (${property.id}).`,
+  property.project_name ? `Project: ${property.project_name}.` : "",
+  primaryPrice ? `Listed at ${primaryPrice}.` : "",
+].filter(Boolean).join(" ");
+const enquiryParams = new URLSearchParams({
+  property_id: clean(property.id),
+  property_title: clean(property.title),
+  property_type: contactPropertyType,
+  listing_type: contactListingType,
+  client_type: property.pre_tenanted || property.is_rental_income ? "investor" : "buyer",
+  location: locationLabel,
+  budget: primaryPrice,
+  message: enquiryMessage,
+  source_url: `${base}property/${property.slug}`,
+});
+const enquiryUrl = `${base}contact?${enquiryParams.toString()}#propertyForm`;
+
+function detail(label: string, value: unknown): DetailItem | null {
+  const text = clean(value);
+  return text && text !== "0" && !/^false$/i.test(text) ? { label, value: humanizeDirectional(text) } : null;
+}
+
+function compact(items: Array<DetailItem | null>) {
+  return items.filter((item): item is DetailItem => item !== null);
+}
+
+function clean(value: unknown) {
+  return value == null ? "" : String(value).trim();
+}
+
+function positive(value: unknown) {
+  const parsed = Number.parseFloat(clean(value).replace(/,/g, ""));
+  return Number.isFinite(parsed) && parsed > 0;
+}
+
+function formatNumber(value: unknown) {
+  const parsed = Number.parseFloat(clean(value).replace(/,/g, ""));
+  return Number.isFinite(parsed) ? new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(parsed) : clean(value);
+}
+
+function rate(value: unknown, unit: string) {
+  return positive(value) ? `₹${formatNumber(value)} / ${unit}` : "";
+}
+
+function countLabel(value: unknown, noun: string) {
+  if (!positive(value)) return "";
+  const number = Number(value);
+  return `${formatNumber(value)} ${number === 1 ? noun : `${noun}s`}`;
+}
+
+function years(value: unknown) {
+  if (!positive(value)) return "";
+  return `${formatNumber(value)} ${Number(value) === 1 ? "year" : "years"}`;
+}
+
+function floorLabel(floor: unknown, total: unknown) {
+  if (positive(floor) && positive(total)) return `${formatNumber(floor)} of ${formatNumber(total)}`;
+  if (positive(floor)) return formatNumber(floor);
+  if (positive(total)) return `${formatNumber(total)} total floors`;
+  return "";
+}
+
+function meaningfulStatus(value: unknown) {
+  const text = clean(value);
+  return !text || /^(other|unknown|n\/a)$/i.test(text) ? "" : humanize(text);
+}
+
+function meaningfulText(value: unknown) {
+  const text = clean(value);
+  return !text || /^(other|false|n\/a)$/i.test(text) ? "" : text;
+}
+
+function meaningfulAgent(value: unknown) {
+  const text = clean(value);
+  return /kindly excuse/i.test(text) ? "" : text;
+}
+
+function humanize(value: unknown) {
+  return clean(value).replace(/[_-]/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function humanizeDirectional(value: string) {
+  return /^(north|south|east|west)([-, ](?:north|south|east|west))*$/i.test(value)
+    ? value.replace(/\b\w/g, (letter) => letter.toUpperCase())
+    : value;
 }
 ---
 
 <BaseLayout title={pageTitle} description={pageDescription}>
-  <section class="property-page-shell container">
-    <div class="property-breadcrumbs">
-      <a href={base}>Home</a>
-      <span>/</span>
-      <a href={base}>Properties</a>
-      <span>/</span>
+  <section class={`property-page-shell container property-type-${propertyType}`}>
+    <nav class="property-breadcrumbs" aria-label="Breadcrumb">
+      <a href={base}>Home</a><span>/</span>
+      <a href={base}>Properties</a><span>/</span>
       <span>{property.title}</span>
-    </div>
+    </nav>
 
     <section class="property-hero">
       <div class="property-hero-copy">
         <div class="property-badges-row">
+          <span class="property-chip property-chip-type">{typeLabel}</span>
           {property.featured && <span class="property-chip property-chip-primary">Featured</span>}
-          {property.is_rental_income && <span class="property-chip property-chip-success">Rental Income</span>}
-          <span class="property-chip">{getValue(property.status)}</span>
+          {(property.pre_tenanted || property.is_rental_income) && <span class="property-chip property-chip-success">Income Property</span>}
+          <span class="property-chip">{statusLabel}</span>
         </div>
 
+        <p class="property-listing-label">{listingLabel} · Ref. {property.id}</p>
         <h1>{property.title}</h1>
         <p class="property-hero-location">{locationLabel}</p>
-        <p class="property-hero-description">{getValue(property.short_description || property.full_description)}</p>
+        {heroDescription && heroDescription !== property.title && <p class="property-hero-description">{heroDescription}</p>}
 
         <div class="property-hero-actions">
-          {property.phone && <a href={`tel:${property.phone}`} class="btn">Call Now</a>}
-          <a href={base + "contact"} class="btn btn-secondary">Schedule Visit</a>
+          {property.phone && <a href={`tel:${property.phone}`} class="btn">Call advisor</a>}
+          <a href={enquiryUrl} class="btn btn-secondary">Schedule a visit</a>
         </div>
       </div>
 
-      <aside class="property-summary-card">
+      <aside class="property-summary-card" aria-label="Property highlights">
+        {primaryPrice && <p class="property-primary-price"><span>{listingLabel} price</span><strong>{primaryPrice}</strong></p>}
         <div class="property-summary-grid">
-          {summaryItems.map((item) => (
-            <div class="property-summary-item">
-              <span>{item.label}</span>
-              <strong title={item.value}>{item.value}</strong>
-            </div>
+          {summaryItems.filter((item) => item.label !== "Asking Price").map((item) => (
+            <div class="property-summary-item"><span>{item.label}</span><strong>{item.value}</strong></div>
           ))}
         </div>
       </aside>
@@ -150,107 +359,51 @@ function getValue(value: string) {
     <section class="property-layout">
       <div class="property-main-column">
         <section class="property-gallery-card">
-          <img src={imageSrc} alt={property.title} class="property-main-image" />
+          <img src={imageSrc} alt={property.title} class="property-main-image" onerror={`this.onerror=null;this.src='${fallbackImage}'`} />
           {galleryImages.length > 0 && (
             <div class="property-gallery-grid">
-              {galleryImages.map((img: string) => (
-                <img src={img} alt={property.title} class="property-gallery-thumb" />
+              {galleryImages.map((image: string, index: number) => (
+                <img src={image} alt={`${property.title} - view ${index + 2}`} class="property-gallery-thumb" loading="lazy" />
               ))}
             </div>
           )}
         </section>
 
-        <section class="property-section-card">
-          <div class="property-section-heading">
-            <h2>Overview</h2>
-          </div>
-          <div class="property-detail-grid">
-            {specificationItems.map((item) => (
-              <div class="property-detail-item">
-                <span>{item.label}</span>
-                <strong title={item.value}>{item.value}</strong>
-              </div>
-            ))}
-          </div>
-        </section>
+        {specificationItems.length > 0 && <DetailSection title={specificationTitle} items={specificationItems} />}
 
-        <section class="property-section-card">
-          <div class="property-section-heading">
-            <h2>Description</h2>
-          </div>
-          <div class="property-description-copy">
-            <p>{getValue(property.full_description || property.short_description)}</p>
-          </div>
-        </section>
+        {description && <section class="property-section-card property-description-section">
+          <div class="property-section-heading"><p class="section-eyebrow">About this property</p><h2>Description</h2></div>
+          <div class="property-description-copy"><p>{description}</p></div>
+        </section>}
 
-        <section class="property-section-card">
-          <div class="property-section-heading">
-            <h2>Project Details</h2>
-          </div>
-          <div class="property-detail-grid">
-            {projectItems.map((item) => (
-              <div class="property-detail-item">
-                <span>{item.label}</span>
-                <strong title={item.value}>{item.value}</strong>
-              </div>
-            ))}
-          </div>
-        </section>
+        {pricingItems.length > 1 && <DetailSection title="Pricing & Terms" items={pricingItems} eyebrow="Commercial details" />}
+        {featureItems.length > 0 && <DetailSection title="Features" items={featureItems} eyebrow="What stands out" />}
+        {projectItems.length > 0 && <DetailSection title="Project Details" items={projectItems} eyebrow="Development" />}
+        {investmentItems.length > 0 && <DetailSection title="Income Snapshot" items={investmentItems} eyebrow="Investment profile" />}
 
-        <section class="property-section-card">
-          <div class="property-section-heading">
-            <h2>Investment Snapshot</h2>
-          </div>
-          <div class="property-detail-grid">
-            {investmentItems.map((item) => (
-              <div class="property-detail-item">
-                <span>{item.label}</span>
-                <strong title={item.value}>{item.value}</strong>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section class="property-section-card">
-          <div class="property-section-heading">
-            <h2>Location Map</h2>
-          </div>
-          {property.google_maps_link ? (
-            <div class="property-map-frame">
-              <iframe
-                src={property.google_maps_link}
-                width="100%"
-                height="360"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-              ></iframe>
-            </div>
-          ) : (
-            <p class="property-empty-state">Available on request</p>
-          )}
-        </section>
+        {(locationItems.length > 0 || property.google_maps_link) && <section class="property-section-card">
+          <div class="property-section-heading"><p class="section-eyebrow">Neighbourhood</p><h2>Location</h2></div>
+          {locationItems.length > 0 && <div class="property-detail-grid location-detail-grid">
+            {locationItems.map((item) => <div class="property-detail-item"><span>{item.label}</span><strong>{item.value}</strong></div>)}
+          </div>}
+          {property.google_maps_link && <div class="property-map-frame">
+            <iframe src={property.google_maps_link} width="100%" height="360" style="border:0;" allowfullscreen="" loading="lazy" title={`Map for ${property.title}`}></iframe>
+          </div>}
+        </section>}
       </div>
 
       <aside class="property-sidebar">
         <section class="property-section-card property-contact-card">
-          <div class="property-section-heading">
-            <h2>Contact</h2>
-            <p>Reach out for site visit, price confirmation, and availability.</p>
-          </div>
-          <div class="property-detail-stack">
-            {contactItems.map((item) => (
-              <div class="property-detail-item">
-                <span>{item.label}</span>
-                <strong title={item.value}>{item.value}</strong>
-              </div>
-            ))}
-          </div>
-
+          <p class="section-eyebrow">Private consultation</p>
+          <div class="property-section-heading"><h2>Interested in this {typeLabel.toLowerCase()}?</h2><p>Confirm availability, pricing, and arrange a private site visit.</p></div>
+          {contactItems.length > 0 && <div class="property-detail-stack">
+            {contactItems.map((item) => <div class="property-detail-item"><span>{item.label}</span><strong>{item.value}</strong></div>)}
+          </div>}
           <div class="property-sidebar-actions">
-            {property.phone && <a href={`tel:${property.phone}`} class="btn">Call {property.agent_name || "Agent"}</a>}
-            <a href={base + "contact"} class="btn btn-secondary">Send Enquiry</a>
+            {property.phone && <a href={`tel:${property.phone}`} class="btn">Call now</a>}
+            <a href={enquiryUrl} class="btn btn-secondary">Send enquiry</a>
           </div>
+          <p class="property-reference">Property reference · {property.id}</p>
         </section>
       </aside>
     </section>

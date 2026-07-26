@@ -16,7 +16,7 @@ const { post } = Astro.props;
   <section class="container content-page blog-post-page">
     <p class="section-eyebrow">{post.category}</p>
     <h1>{post.title}</h1>
-    <p class="section-intro">{post.publishedOn} • {post.readTime}</p>
+    <p class="section-intro">{post.publishedOn} · {post.readTime}</p>
 
     <article class="blog-post-body content-panel">
       {post.body.map((paragraph: string) => <p>{paragraph}</p>)}

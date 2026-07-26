@@ -19,16 +19,18 @@ const investorCount = propertyCards.filter((property) => property.is_rental_inco
   description="Buy apartments, villas, and commercial properties in Hyderabad"
 >
   <section class="container listing-page">
-    <SearchFilter properties={propertyCards} />
-
     <section class="listing-hero">
       <div class="listing-hero-copy">
-        <p class="section-eyebrow">Premium Property Search</p>
-        <h1>Discover Hyderabad listings with a richer, smarter browsing experience</h1>
+        <p class="section-eyebrow">Hyderabad Property Advisory</p>
+        <h1>Considered spaces.<br /><em>Confident decisions.</em></h1>
         <p class="section-intro hero-intro">
-          Explore verified homes, commercial spaces, and investment opportunities with filters that
-          help users fine-tune exactly what they want to see.
+          A selective collection of homes, land, and commercial opportunities, backed by local
+          knowledge and straightforward advice.
         </p>
+        <div class="hero-actions">
+          <a href="#property-grid" class="btn">Explore properties</a>
+          <a href={base + "contact"} class="hero-text-link">Speak with an advisor <span aria-hidden="true">↗</span></a>
+        </div>
       </div>
 
       <div class="listing-hero-stats">
@@ -42,16 +44,24 @@ const investorCount = propertyCards.filter((property) => property.is_rental_inco
         </article>
         <article class="stat-card">
           <strong>{featuredCount}</strong>
-          <span>Hot Deal Properties</span>
+          <span>Featured opportunities</span>
         </article>
         <article class="stat-card">
           <strong>{investorCount}</strong>
-          <span>Investor Picks</span>
+          <span>Income assets</span>
         </article>
       </div>
     </section>
 
+    <SearchFilter properties={propertyCards} />
+
     <section class="results-section">
+      <div class="section-heading results-heading">
+        <div>
+          <p class="section-eyebrow">Current Collection</p>
+          <h2>Properties worth considering</h2>
+        </div>
+      </div>
       <div class="results-shell">
         <div class="grid premium-grid" id="property-grid">
           {propertyCards.map((property) => (
@@ -77,18 +87,18 @@ const investorCount = propertyCards.filter((property) => property.is_rental_inco
           <p class="section-eyebrow">Blog Posts</p>
           <h2>Property Insights for Buyers and Investors</h2>
         </div>
-        <a href="/blog/">View All Posts</a>
+        <a href={base + "blog"}>View all posts</a>
       </div>
 
       <div class="blog-grid">
         {blogPosts.map((post) => (
           <article class="blog-card">
-            <p class="blog-card-meta">{post.category} • {post.readTime}</p>
+            <p class="blog-card-meta">{post.category} <span>·</span> {post.readTime}</p>
             <h3>{post.title}</h3>
             <p>{post.excerpt}</p>
             <div class="blog-card-footer">
               <span>{post.publishedOn}</span>
-              <a href={`/blog/${post.slug}`}>Read Article</a>
+              <a href={`${base}blog/${post.slug}`}>Read article →</a>
             </div>
           </article>
         ))}

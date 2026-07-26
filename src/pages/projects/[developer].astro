@@ -1,0 +1,49 @@
+---
+import { base } from "astro:config/client";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { getDevelopers, type Developer } from "../../lib/projects";
+
+export async function getStaticPaths() {
+  const developers = await getDevelopers();
+  return developers.map((developer) => ({
+    params: { developer: developer.slug },
+    props: { developer },
+  }));
+}
+
+const { developer } = Astro.props as { developer: Developer };
+const listingCount = developer.projects.reduce((total, project) => total + project.listings.length, 0);
+---
+
+<BaseLayout
+  title={`${developer.name} Projects in Hyderabad | Surya Property Consultant`}
+  description={`View available ${developer.name} projects and property listings in Hyderabad.`}
+>
+  <section class="container developer-projects-page">
+    <nav class="property-breadcrumbs" aria-label="Breadcrumb">
+      <a href={base}>Home</a><span>/</span>
+      <a href={base + "projects"}>Developers</a><span>/</span>
+      <span>{developer.name}</span>
+    </nav>
+
+    <header class="developer-projects-hero">
+      <div>
+        <p class="section-eyebrow">Developer Collection</p>
+        <h1>{developer.name}</h1>
+      </div>
+      <div class="developer-projects-summary">
+        <p>{developer.projects.length} {developer.projects.length === 1 ? "project" : "projects"} · {listingCount} active {listingCount === 1 ? "listing" : "listings"}</p>
+        <p>{developer.locations.join(" · ") || "Hyderabad"}</p>
+      </div>
+    </header>
+
+    <div class="projects-grid">
+      {developer.projects.map((project, index) => <ProjectCard project={project} index={index} />)}
+    </div>
+
+    <div class="directory-back">
+      <a href={base + "projects"}>← View all developers</a>
+    </div>
+  </section>
+</BaseLayout>

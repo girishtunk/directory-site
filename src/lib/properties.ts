@@ -63,17 +63,16 @@ export async function getProperties() {
 }
 
 function normalizeProperty(raw: Record<string, any>) {
-  const middleRepaired = repairSegment(raw, MIDDLE_FIELDS, compatibilityCost);
-  const tailRepaired = repairSegment(middleRepaired, TAIL_FIELDS, compatibilityCost);
-  const repaired = normalizeImageFields(tailRepaired);
+  // OpenSheet returns keyed records; positional realignment corrupts valid sparse rows.
+  const repaired = normalizeImageFields(raw);
   const coverImage = pickImage(repaired.cover_image);
   const galleryImages = splitImages(repaired.gallery_images);
-  const propertyType = normalizePropertyType(repaired.property_type);
+  const propertyType = normalizePropertyType(repaired.property_type, repaired.title);
 
   return {
     ...repaired,
     property_type: propertyType,
-    total_price_cr: toOptionalNumber(repaired.total_price_cr),
+    total_price_cr: toOptionalPositiveNumber(repaired.total_price_cr),
     monthly_rent_lakhs: toNumber(repaired.monthly_rent_lakhs),
     featured: toBoolean(repaired.featured),
     is_rental_income: toBoolean(repaired.is_rental_income),
@@ -82,6 +81,17 @@ function normalizeProperty(raw: Record<string, any>) {
     theatre_room: toBoolean(repaired.theatre_room),
     rera_verified: toBoolean(repaired.rera_verified),
     agents_allowed: toBoolean(repaired.agents_allowed),
+    corner_unit: toBoolean(repaired.corner_unit),
+    price_negotiable: toBoolean(repaired.price_negotiable),
+    includes_registration: toBoolean(repaired.includes_registration),
+    gst_applicable: toBoolean(repaired.gst_applicable),
+    pre_tenanted: toBoolean(repaired.pre_tenanted),
+    gated: toBoolean(repaired.gated),
+    semi_gated: toBoolean(repaired.semi_gated),
+    is_lockable: toBoolean(repaired.is_lockable),
+    standalone: toBoolean(repaired.standalone),
+    road_approach: cleanText(repaired.road_approach) || cleanText(repaired.road_apporach),
+    plot_area_sqyd: cleanText(repaired.plot_area_sqyd) || cleanText(repaired.plot_area_sqyrd),
     phone: pickPhone(repaired.phone),
     cover_image: coverImage,
     gallery_images: galleryImages.join(","),
@@ -94,8 +104,9 @@ function normalizeProperty(raw: Record<string, any>) {
   };
 }
 
-function normalizePropertyType(value: unknown) {
+function normalizePropertyType(value: unknown, title: unknown) {
   const type = cleanText(value).toLowerCase();
+  const titleText = cleanText(title).toLowerCase();
 
   switch (type) {
     case "apartment":
@@ -108,7 +119,15 @@ function normalizePropertyType(value: unknown) {
     case "independent house":
       return "independent-house";
     case "plot":
+      if (/commercial\s+plot/.test(titleText)) {
+        return "commercial-plot";
+      }
+      if (/commercial\s+building|standalone\s+building/.test(titleText)) {
+        return "commercial";
+      }
       return "residential-plot";
+    case "flat":
+      return "apartment";
     case "office":
     case "retail":
       return "commercial";
@@ -283,6 +302,11 @@ function toNumber(value: unknown) {
 function toOptionalNumber(value: unknown) {
   const parsed = Number.parseFloat(cleanText(value));
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+function toOptionalPositiveNumber(value: unknown) {
+  const parsed = toOptionalNumber(value);
+  return parsed != null && parsed > 0 ? parsed : null;
 }
 
 function toBoolean(value: unknown) {

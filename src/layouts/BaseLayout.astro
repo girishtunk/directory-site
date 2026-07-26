@@ -1,6 +1,14 @@
 ---
 import { base } from "astro:config/client";
 const { title = "Real Estate Directory", description = "" } = Astro.props;
+const pathname = Astro.url.pathname;
+const navItems = [
+  { href: base, label: "Properties", match: pathname === base },
+  { href: base + "projects", label: "Projects", match: pathname.startsWith(base + "projects") },
+  { href: base + "blog", label: "Journal", match: pathname.startsWith(base + "blog") },
+  { href: base + "about", label: "About", match: pathname.startsWith(base + "about") },
+  { href: base + "contact", label: "Contact", match: pathname.startsWith(base + "contact") },
+];
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +16,11 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#17352f" />
     <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -34,8 +46,8 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
             class="logo-image"
           />
           <span class="logo-copy">
-            <span class="logo-kicker">Verified Real Estate Advisory</span>
             <span class="logo-text">Surya Property Consultant</span>
+            <span class="logo-kicker">Hyderabad · Est. 2020</span>
           </span>
         </a>
 
@@ -48,15 +60,13 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
 
         <div class="header-menu">
           <nav class="main-nav" aria-label="Primary navigation">
-            <a href={base}>Home</a>
-            <a href={base + "blog"}>Blog</a>
-            <a href={base + "about"}>About</a>
-            <a href={base + "contact"}>Contact</a>
+            {navItems.map((item) => (
+              <a href={item.href} class:list={{ active: item.match }} aria-current={item.match ? "page" : undefined}>{item.label}</a>
+            ))}
           </nav>
 
           <div class="header-cta">
-            <span class="header-cta-text">Schedule a Site Visit</span>
-            <a href={base + "contact"} class="btn header-cta-button">Enquire Now</a>
+            <a href={base + "contact"} class="btn header-cta-button">Request a consultation</a>
           </div>
         </div>
       </div>
@@ -68,8 +78,11 @@ const { title = "Real Estate Directory", description = "" } = Astro.props;
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>© {new Date().getFullYear()} Surya Property Consultant. All rights reserved.</p>
-        <p>TG RERA NO. A02200002962 | Trusted Property Listings</p>
+        <div class="footer-brand">
+          <strong>Surya Property Consultant</strong>
+          <p>Independent property advice for Hyderabad.</p>
+        </div>
+        <p class="footer-meta">TG RERA NO. A02200002962<br />© {new Date().getFullYear()} All rights reserved.</p>
         <div class="social-section" aria-label="Social media links">
           <span class="social-title">Follow Us</span>
           <div class="social-links">

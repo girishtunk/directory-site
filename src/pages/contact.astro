@@ -4,14 +4,13 @@ import { base } from "astro:config/client";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 ---
-    <link rel="stylesheet" href={base +"styles/global.css"} />
-
 <BaseLayout
   title="Contact Us | Buy or Sell Property | Surya Property Consultant"
   description="Contact Surya Property Consultant for buying, selling, renting, leasing, and property investment support in Hyderabad."
 >
   <div class="container contact-page">
-    <h1>Contact Us for Buying or Selling Property</h1>
+    <p class="section-eyebrow">Private Consultation</p>
+    <h1>Let’s discuss your next move.</h1>
 
     <p class="contact-intro">
       Whether you are a <strong>buyer looking for the right property</strong> or a
@@ -31,6 +30,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
 
     <form class="contact-form" id="propertyForm">
+      <input type="hidden" id="property_id" name="property_id" />
+      <input type="hidden" id="property_title" name="property_title" />
+      <input type="hidden" id="source_url" name="source_url" />
+
+      <aside class="enquiry-property-context" id="enquiry-property-context" hidden>
+        <span>Enquiring about</span>
+        <strong id="enquiry-property-title"></strong>
+        <small id="enquiry-property-meta"></small>
+      </aside>
+
       <h2>Enquiry Type</h2>
 
       <div class="form-group">

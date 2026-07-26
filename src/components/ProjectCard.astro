@@ -1,0 +1,31 @@
+---
+import { base } from "astro:config/client";
+import type { Project } from "../lib/projects";
+
+const { project, index = 0 } = Astro.props as { project: Project; index?: number };
+const property = project.listings[0];
+const fallbackImages = [
+  base + "images/defaults/apartment.jpg",
+  base + "images/defaults/villa.jpg",
+  base + "images/defaults/commercial.jpg",
+];
+const image = project.coverImage || fallbackImages[index % fallbackImages.length];
+const fallback = fallbackImages[index % fallbackImages.length];
+const location = project.locations.join(", ") || "Hyderabad";
+---
+
+<article class="project-card">
+  <a href={`${base}property/${property.slug}`} class="project-card-media" aria-label={`View ${project.name}`}>
+    <img src={image} alt={project.name} loading="lazy" onerror={`this.onerror=null;this.src='${fallback}'`} />
+    <span>{String(index + 1).padStart(2, "0")}</span>
+  </a>
+  <div class="project-card-copy">
+    <p class="project-card-location">{location}</p>
+    <h2><a href={`${base}property/${property.slug}`}>{project.name}</a></h2>
+    <div class="project-card-meta">
+      <span>{project.listings.length} {project.listings.length === 1 ? "listing" : "listings"}</span>
+      <span>{project.startingPrice ? `From ₹${project.startingPrice} Cr` : "Price on request"}</span>
+    </div>
+    <a href={`${base}property/${property.slug}`} class="project-card-link">View project <span aria-hidden="true">→</span></a>
+  </div>
+</article>

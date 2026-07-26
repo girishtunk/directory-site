@@ -1,18 +1,19 @@
 ---
+import { base } from "astro:config/client";
 const { page, totalPages } = Astro.props;
 ---
 
 <nav aria-label="Pagination">
-  {page > 1 && <a href={page === 2 ? "/" : `/page/${page - 1}`}>Prev</a>}
+  {page > 1 && <a href={page === 2 ? base : `${base}page/${page - 1}`}>Prev</a>}
 
   {Array.from({ length: totalPages }).map((_, i) => (
     <a
-      href={i === 0 ? "/" : `/page/${i + 1}`}
+      href={i === 0 ? base : `${base}page/${i + 1}`}
       aria-current={page === i + 1 ? "page" : undefined}
     >
       {i + 1}
     </a>
   ))}
 
-  {page < totalPages && <a href={`/page/${page + 1}`}>Next</a>}
+  {page < totalPages && <a href={`${base}page/${page + 1}`}>Next</a>}
 </nav>

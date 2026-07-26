@@ -27,10 +27,12 @@ const topAreas = Object.entries(areaCounts)
     <div class="search-field search-panel-primary">
       <label class="sr-only" for="search-input">Search by area, locality, landmark, or title</label>
       <div class="search-input-wrap search-input-rich search-input-compact">
-        <span class="search-icon" aria-hidden="true">⌕</span>
+        <span class="search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+        </span>
         <input
           type="search"
-          placeholder="Search Kokapet, Financial District, luxury apartment, Radhey Raaga..."
+          placeholder="Search by area, project, or property type"
           id="search-input"
           autocomplete="off"
           enterkeyhint="search"
@@ -54,16 +56,16 @@ const topAreas = Object.entries(areaCounts)
         aria-expanded="false"
         aria-controls="advanced-filters"
       >
-        Show Advanced Filters
+        Filters <span aria-hidden="true">＋</span>
       </button>
     </div>
   </div>
 
   <div id="advanced-filters" class="advanced-filters" hidden>
     <div class="advanced-filters-toolbar">
-      <p class="advanced-filters-label">Advanced Filters</p>
+      <p class="advanced-filters-label">Refine your search</p>
       <button type="button" class="btn btn-secondary" id="reset-filters">
-        Reset Filters
+        Clear all
       </button>
     </div>
 
@@ -104,11 +106,14 @@ const topAreas = Object.entries(areaCounts)
         <label for="facing-filter">Facing</label>
         <select id="facing-filter">
           <option value="all">Any Facing</option>
-          <option value="East">East</option>
-          <option value="West">West</option>
-          <option value="North">North</option>
-          <option value="North-East">North-East</option>
-          <option value="North-West">North-West</option>
+          <option value="east">East</option>
+          <option value="west">West</option>
+          <option value="north">North</option>
+          <option value="south">South</option>
+          <option value="north-east">North-East</option>
+          <option value="north-west">North-West</option>
+          <option value="south-east">South-East</option>
+          <option value="south-west">South-West</option>
         </select>
       </div>
 

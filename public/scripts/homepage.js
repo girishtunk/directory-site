@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const initialType = params.get("type") || "all";
   const initialSearch = params.get("q") || "";
   const initialPrice = params.get("price") || "all";
-  const initialFacing = params.get("facing") || "all";
+  const initialFacing = (params.get("facing") || "all").toLowerCase();
   const initialDeal = params.get("deal") || "all";
   const initialSort = params.get("sort") || "recommended";
   const hasAdvancedParams = [initialArea, initialType, initialPrice, initialFacing, initialDeal, initialSort]
@@ -201,16 +201,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (state.facing !== "all") {
-      labels.push(`Facing: ${state.facing}`);
+      labels.push(`Facing: ${facingFilter.options[facingFilter.selectedIndex].textContent}`);
     }
 
     if (state.deal !== "all") {
       labels.push(`Deal: ${dealFilter.options[dealFilter.selectedIndex].textContent}`);
     }
 
-    activeFilters.innerHTML = labels.length
-      ? labels.map((label) => `<span class="filter-pill">${label}</span>`).join("")
-      : '<span class="filter-pill filter-pill-muted">Showing all listings</span>';
+    const filterLabels = labels.length ? labels : ["Showing all listings"];
+    const pills = filterLabels.map((label) => {
+      const pill = document.createElement("span");
+      pill.className = `filter-pill${labels.length ? "" : " filter-pill-muted"}`;
+      pill.textContent = label;
+      return pill;
+    });
+    activeFilters.replaceChildren(...pills);
 
     const totalMatches = filteredCards.length;
     resultsSummary.textContent = `${totalMatches} ${totalMatches === 1 ? "property" : "properties"} found`;
@@ -228,7 +233,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const searchableText = card.dataset.search || "";
       const area = card.dataset.areaName || "";
       const propertyType = card.dataset.type;
-      const facing = card.dataset.facing || "";
+      const facings = (card.dataset.facing || "")
+        .split(/[,/]+/)
+        .map((value) => value.trim().toLowerCase().replace(/\s+/g, "-"))
+        .filter(Boolean);
       const price = Number(card.dataset.price);
       const isFeatured = card.dataset.featured === "true";
       const isInvestor = card.dataset.investor === "true";
@@ -237,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const matchesArea = state.area === "all" || area === state.area;
       const matchesType = state.type === "all" || propertyType === state.type;
       const matchesPrice = matchesPriceBand(price, state.price);
-      const matchesFacing = state.facing === "all" || facing === state.facing;
+      const matchesFacing = state.facing === "all" || facings.includes(state.facing);
       const matchesDeal =
         state.deal === "all" ||
         (state.deal === "featured" && isFeatured) ||

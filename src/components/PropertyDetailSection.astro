@@ -1,0 +1,19 @@
+---
+type DetailItem = { label: string; value: string };
+const { title, items, eyebrow } = Astro.props as { title: string; items: DetailItem[]; eyebrow?: string };
+---
+
+<section class="property-section-card">
+  <div class="property-section-heading">
+    {eyebrow && <p class="section-eyebrow">{eyebrow}</p>}
+    <h2>{title}</h2>
+  </div>
+  <div class="property-detail-grid">
+    {items.map((item) => (
+      <div class="property-detail-item">
+        <span>{item.label}</span>
+        <strong title={item.value}>{item.value}</strong>
+      </div>
+    ))}
+  </div>
+</section>
